@@ -1,0 +1,89 @@
+emacsen-common (1.4.6) frozen unstable; urgency=low
+
+  * debian-emacs-policy: add-on packages may not depend on emacsen-common.
+  * debian-emacs-policy: add-on packages must declare install/remove
+    script dependencies (i.e. make, etc.)
+  * fixed postinst to be cleaner about /usr/local/* (Closes: Bug#21524,
+    Bug#22737, Bug#22959)
+  * Made /etc/emacs/site-start.el a conffile (Closes: Bug#21934)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Mon, 29 Jun 1998 18:53:51 -0500
+
+emacsen-common (1.4.5) frozen unstable; urgency=low
+
+  * Fixed upload problem.  This should still go in frozen as it still
+    closes Bug#21089.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sat, 16 May 1998 21:18:10 -0500
+
+emacsen-common (1.4.4) frozen unstable; urgency=low
+
+  * Fix things so failure in add-on package install/remove script
+    won't kill an emacs flavor install, but will kill an independent
+    add-on package install.  (Closes: Bug#21089)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Fri, 15 May 1998 13:06:04 -0500
+
+emacsen-common (1.4.3) frozen unstable; urgency=low
+
+  * Fix problem in postinst /usr/local... creation (Closes: Bug#19935)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Thu, 19 Mar 1998 08:15:55 -0600
+
+emacsen-common (1.4.2) frozen unstable; urgency=low
+
+  * Upload to frozen and unstable (oops.)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Tue, 17 Mar 1998 13:10:20 -0600
+
+emacsen-common (1.4.1) unstable; urgency=low
+
+  * Fixed typos in debian-emacs-policy.
+  * Fixed handling of /usr/local dir.  (Closes: Bug#19301)
+  * Fixed load-path clobbering in debian-startup.el (Closes: Bug#19597)
+  * Switched to more reasonable version numbering (debian-only package).
+    Using Linux kernel scheme.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Fri, 13 Mar 1998 12:21:29 -0600
+
+emacsen-common (1.3-1) unstable; urgency=low
+
+  * Fixed debian-vars (Closes: Bug#17235)
+      - renamed functions to debian-*
+      - eliminated spurious message about mark.
+      - don't set user-mail-address (it's done for you by emacs later)
+      - clean up load messages
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sat, 14 Feb 1998 15:20:00 -0600
+
+emacsen-common (1.2-1) unstable; urgency=low
+
+  * Fixed disabled load line in debian-startup.el (Closes: Bug#18189)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sat, 14 Feb 1998 13:03:20 -0600
+
+emacsen-common (1.1-2) unstable; urgency=low
+
+  * Updated postrm to remove /var/lib/emacsen-common on purge if it's
+    actually empty.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Mon,  9 Feb 1998 01:34:32 -0600
+
+emacsen-common (1.1-1) unstable; urgency=low
+
+  * Added debian-emacs-policy to /usr/doc/emacsen-common
+  * Updated debian-emacs-policy to reflect this.
+  * Changed to call add-on install/remove scripts for the common
+    "emacs" flavor only on package install.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Fri, 23 Jan 1998 20:49:35 -0600
+
+emacsen-common (1.0-1) unstable; urgency=low
+
+  * Initial creation.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sun, 18 Jan 1998 13:35:05 -0600
+
+Local variables:
+mode: debian-changelog
+End:

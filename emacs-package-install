@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+use strict;
+
+# Was this called because we're installing/removing a new emacs
+# flavor?  This should probably be handled with getopt and a command
+# line opt, but it's freeze time, and I'm tired...
+
+my $currently_handling_emacsen = $ENV{'CURRENTLY_HANDLING_EMACSEN'};
+
+my $lib_dir = "/usr/lib/emacsen-common";
+my $var_dir = "/var/lib/emacsen-common";
+my $pkg = $ARGV[0];
+my $action = 'install';
+$action = 'remove' if $0 =~ /remove$/o;
+
+my $dry_run = 0;
+
+sub execute {
+  my(@cmd) = @_;
+  if($dry_run) {
+    print join(" ", @cmd) . "\n";
+  } else {
+    if(system(@cmd) != 0) {
+      if($currently_handling_emacsen) {
+        print STDERR
+            "emacs-package-$action: " . join(" ", @cmd) . " failed";
+      } else {
+        die "emacs-package-$action: " . join(" ", @cmd) . " failed";
+      }
+    }
+  }
+}
+
+open FLAVORS, "<${var_dir}/installed-flavors" or
+  die "emacs-package-$action: Couldn't open ${var_dir}/installed-flavors";
+my @installed_flavors = <FLAVORS>;
+close FLAVORS;
+chomp @installed_flavors;
+
+my $script = $lib_dir . "/packages/$action/$pkg";
+execute($script, 'emacs', @installed_flavors) if -e $script;
+
+my $flavor;
+foreach $flavor (@installed_flavors) {
+  execute($script, $flavor, @installed_flavors) if -e $script;
+}

@@ -1,0 +1,129 @@
+#!/usr/bin/make -f
+# Sample debian.rules file - for GNU Hello (1.3).
+# Copyright 1994,1995 by Ian Jackson.
+# I hereby give you perpetual unlimited permission to copy,
+# modify and relicense this file, provided that you do not remove
+# my name from the file itself.  (I assert my moral right of
+# paternity under the Copyright, Designs and Patents Act 1988.)
+# This file may have to be extensively modified
+#
+# modified for emacsen-common by Rob Browning <rlb@cs.utexas.edu>
+
+pwd       := $(shell pwd)
+version   := $(shell dpkg-parsechangelog | grep Version)
+version   := $(shell echo ${version} | perl -pe 's/Version:\s+//o')
+upstream  := $(shell echo ${version} | perl -pe 's/-.*//o')
+# deb_rev   := $(shell echo ${version} | perl -pe 's/.*-//o')
+
+# the architecture of the package
+arch      := $(shell dpkg --print-architecture)
+
+# The Debian target name of the package
+target    := ${arch}-debian-linux-gnu
+
+CFLAGS    := -O2 -g
+
+eclib := debian/tmp/usr/lib/emacsen-common
+flavors := emacs19 emacs20 xemacs19 xemacs20
+
+build:
+	$(checkdir)
+	touch build
+
+clean:
+	$(checkdir)
+	-rm `find . -name "*~"`
+	-rm -rf debian/tmp debian/files
+
+binary-indep:	checkroot build
+	$(checkdir)
+
+	perl -wc emacs-install
+	perl -wc emacs-package-install
+
+	-rm -rf debian/tmp
+	install -d debian/tmp
+
+	install -d debian/tmp/etc/emacs
+	cp site-start.el debian/tmp/etc/emacs
+
+  # emacsen-common owns these so that removing an emacsen won't
+  # cause dpkg to complain that there are package files still in them.
+	for flavor in ${flavors}; do \
+    install -d debian/tmp/etc/${flavor}/site-start.d; \
+    install -d debian/tmp/usr/share/${flavor}/site-lisp; \
+	done
+
+  # 00debian-vars.el
+	install -d debian/tmp/etc/emacs/site-start.d
+	cp 00debian-vars.el debian/tmp/etc/emacs/site-start.d
+
+  # debian-startup.el
+	install -d debian/tmp/usr/share/emacs/site-lisp
+	cp debian-startup.el debian/tmp/usr/share/emacs/site-lisp
+
+	install -d ${eclib}
+	install -d ${eclib}/packages/install
+	install -d ${eclib}/packages/remove
+	cp -a emacs-install ${eclib}
+	cp -a emacs-remove ${eclib}
+	cp -a emacs-package-install ${eclib}
+	cp -a emacs-package-remove ${eclib}
+
+	install -d debian/tmp/var/lib/emacsen-common
+
+  # emacsen-common add-on pacakge scripts
+	cp -a emacsen-common.install ${eclib}/packages/install/emacsen-common
+	cp -a emacsen-common.remove ${eclib}/packages/remove/emacsen-common
+
+  # manpages
+  #	find debian/tmp/usr/man -type f | xargs --no-run-if-empty gzip -9v
+
+  # /usr/doc/emacs20 directory
+	install -d debian/tmp/usr/doc/emacsen-common
+	cp debian/changelog debian/tmp/usr/doc/emacsen-common/changelog.Debian
+	cp debian-emacs-policy debian/tmp/usr/doc/emacsen-common/
+	find debian/tmp/usr/doc/emacsen-common -type f | xargs gzip -9v
+	cp debian/copyright debian/tmp/usr/doc/emacsen-common
+
+  # Mangle permissions to conform.
+	chown -R root.root debian/tmp
+	find debian/tmp -type d | xargs chmod 755
+	find debian/tmp -not -type d | xargs chmod 644
+
+	find ${eclib} -type f | xargs chmod 755 
+
+  # control scripts	
+	install -d debian/tmp/DEBIAN
+	install --mode 755 debian/postinst debian/tmp/DEBIAN
+	install --mode 755 debian/prerm debian/tmp/DEBIAN
+	install --mode 755 debian/postrm debian/tmp/DEBIAN
+	install --mode 755 debian/conffiles debian/tmp/DEBIAN
+
+	dpkg-gencontrol -pemacsen-common
+	dpkg --build debian/tmp ..
+
+binary-arch:	checkroot build
+	$(checkdir)
+
+define checkdir
+	test -f debian/rules
+endef
+
+# Below here is fairly generic really
+
+binary:		binary-indep binary-arch
+
+source diff:
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+checkroot:
+	$(checkdir)
+	test root = "`whoami`"
+
+.PHONY: binary binary-arch binary-indep clean checkroot
+
+# Local variables:
+# mode: makefile
+# tab-width: 2
+# End:
