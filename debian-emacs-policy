@@ -21,11 +21,32 @@ xemacs20 emacs19 emacs20), but when I say <flavor>, I mean just one of
 
 2) Flavor indication
 
-   Each emacs binary must set the variable debian-emacs-flavor to be
-   the same as the name of the debian-package.  For example, the
-   emacs20 package does this in startup.el like this:
+   [ NOTE: I am at least temporarily rescinding my recent changes (the
+     ones detailed below).  Though aesthetically appealing, they have
+     caused too much trouble.  For now (at least for Debian's current
+     frozen release), please revert to the previous behavior of
+     setting debian-emacs-flavor early in your particular emacsen's
+     startup process and regardless of the setting of -q or
+     --no-site-file.
 
-     (setq debian-emacs-flavor 'emacs20)
+     I believe that this reversion also means that emacsen maintainers
+     can remove the emacsen-common version dependency...
+
+     Thanks, and sorry for the short notice. (rlb). ]
+
+   Each emacs binary must indicate it's "flavor" which must be the
+   same as the name of the debian package.  This is now handed with an
+   argument to the debian-startup function discussed later.  For
+   example, the emacs20 package does this in startup.el like this:
+
+     (debian-startup 'emacs20)
+
+   This is a change from previous versions of emacsen-common.  Once a
+   flavor has been modified to follow this new approach, it should add
+   a depends line to make sure the right version of emacsen common is
+   installed: "Depends: emacsen-common (>= 1.4.10)".  This change
+   provides a better abstraction, and it minimizes the amount of code
+   we have to insinuate into startup.el.
 
 3) Emacs startup strategy
 
@@ -38,19 +59,48 @@ xemacs20 emacs19 emacs20), but when I say <flavor>, I mean just one of
 
   /etc/emacs/site-start.el is a conffile, and is owned by
   emacsen-common.  This file should not be modified by *any* add-on
-  packages.  It is solely for the use of the local admin.
+  packages, or by any emacsen package maintainer.  It is solely for
+  the use of the local admin.  It should be empty unless the local
+  admin modifies it.
 
   The load-path for a given emacs flavor must include /etc/<flavor>
   and /etc/emacs in that order, and on startup each emacsen must call
   (debian-startup) and then load "site-start".  This means that
   /etc/emacs/site-start.el will be loaded if it exists, unless there's
   an /etc/<flavor>/site-start.el{,c} or /etc/emacs/site-start.elc
-  which will take precedence.
+  which will take precedence.  These site-start.el files are also the
+  sole domain of the local system admin, and should be empty unless
+  modified by the local admin.
 
-  debian-startup, for now, just calls debian-run-directories.
-  debian-run-directories takes the union of all the file base names
-  (i.e. without any .el or .elc extension, and without the directory
-  component: i.e. /etc/xemacs/site-start.d/50foo.elc => foo).  Then
+  Given that the site-startup.el files are "off-limits" to the emacsen
+  maintainers, the next question is, "From where can we run
+  debian-startup?"  The safest possibility, and the one I had
+  originally intended was to modify lisp/startup.el to do the right
+  thing, and I had also intended that --no-site-file would disable all
+  of the debian startup bits, including calling debian startup.  So I
+  did this in emacs20's startup.el:
+
+    ;; Debian version of site-start.
+    (if site-run-file
+        (progn
+          ;; Load all the debian package snippets.
+          ;; It's in here because we want -q to kill it too.
+          (if (load "debian-startup" t t nil)
+              (debian-startup 'emacs20))
+          ;; Now the normal site file...
+          (load site-run-file t t nil)))
+
+  This makes sure that debian's bits are setup as early as possible,
+  and requires only minor modifications to the emacs source.  An
+  alternate possibility might be to use lisp/site-init.el, but I'm not
+  sure that would work right.  Feel free to contact me if you know
+  better.
+
+  debian-startup, among other things, sets debian-emacs-flavor and
+  then calls debian-run-directories.  debian-run-directories takes the
+  union of all the file base names (i.e. without any .el or .elc
+  extension, and without the directory component:
+  i.e. /etc/xemacs/site-start.d/50foo.elc => foo).  Then
   debian-startup temporarily augments the emacs load path to include
   /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in that
   order, and then calls (load base-name) in alphabetical order.

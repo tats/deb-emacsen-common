@@ -1,3 +1,47 @@
+emacsen-common (1.4.12) unstable frozen; urgency=low
+
+  * Emergency changes to startup policy.  We're reverting for now to the
+    old behavior because the new way breaks too many things, and we need
+    to release.  Please see debian-emacs-policy's bits about
+    debian-emacs-flavor for details, and sorry for the short notice.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Tue, 20 Jun 2000 11:17:52 -0500
+
+emacsen-common (1.4.11) unstable frozen; urgency=low
+
+  * Upload to frozen to match emacs20 bugfix upload for frozen.  Without
+    this the frozen emacs20 is uninstallable. (Closes: Bug#64648)
+  * Hopefully accomodate bug in xemacs packages with strange hack.  This
+    will work around the current problem, but xemacs still needs some
+    fixing. (Closes: Bug#61161  Bug#61080 Bug#61110 Bug#61133 Bug#61157) 
+  * Update debian-emacs-policy to be stricter about startup behaviors and
+    to more clearly indicate what I really meant.  Since no one's
+    responded to my proposal on debian-emacsen, I guess there are no
+    objections :> Feel free to bring this up later if you have a
+    problem...
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Thu, 25 May 2000 09:54:12 -0500
+
+emacsen-common (1.4.10) unstable; urgency=low
+
+  * Moved debian-emacs-flavor here from emacs20.  Other emacsen
+    maintainers note, you should not declare this in your packages
+    anymore.  It is now set by debian-startup automatically from its
+    argument.  See debian-emacs-policy for details.
+  * Fix problem in args to install-info in postinst. (Closes: Bug#25196)
+  * Get /usr/local/... permissions right. (Closes: Bug#25913)
+  * Fix bashism in postrm. (Closes: Bug#41967 Bug#50674)
+  * Remove symlinks from package so I can put it under CVS.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Tue, 22 Feb 2000 16:11:33 -0600
+
+emacsen-common (1.4.9) frozen unstable; urgency=low
+
+  * silenced mkdir warnings in postinst.
+  * fixed important bug in dependency sorting (Closes: Bug#34095)
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Mon,  8 Mar 1999 19:00:32 -0600
+
 emacsen-common (1.4.8) unstable; urgency=low
 
   * Clean up old "emacs" info entry in postinst.

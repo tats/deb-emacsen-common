@@ -2,7 +2,7 @@
 
 set -e
 
-if [ $1 == purge ]
+if [ "$1" = purge ]
 then
   if [ -e /var/lib/emacsen-common/installed-flavors ]
   then

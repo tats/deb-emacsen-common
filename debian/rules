@@ -28,12 +28,16 @@ flavors := emacs19 emacs20 xemacs19 xemacs20
 
 build:
 	$(checkdir)
+	ln -sf emacs-install emacs-remove
+	ln -sf emacs-package-install emacs-package-remove
 	touch build
 
 clean:
 	$(checkdir)
-	-rm `find . -name "*~"`
-	-rm -rf debian/tmp debian/files
+	rm -f emacs-remove emacs-package-remove
+	find . -name "*~" -print0 | xargs -r -0 rm -f
+	find . -name "#*" -print0 | xargs -r -0 rm -f
+	rm -rf debian/tmp debian/files build
 
 binary-indep:	checkroot build
 	$(checkdir)

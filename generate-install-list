@@ -57,6 +57,16 @@ sub filter_depends {
 sub generate_relevant_tsort_dependencies {
   my($pkglist, $installed_add_ons, $progress_hash) = @_;
 
+  # Make a copy because we're going to mangle it.
+  my @listcopy = @$pkglist;
+
+  shift @_;
+  return(generate_relevant_tsort_dependencies_internals(\@listcopy, @_));
+}
+
+sub generate_relevant_tsort_dependencies_internals {
+  my($pkglist, $installed_add_ons, $progress_hash) = @_;
+
   # print "GRD: " . join(" ", @$pkglist) . "\n";
   
   my $pkg = shift @$pkglist;
@@ -80,8 +90,9 @@ sub generate_relevant_tsort_dependencies {
     map { push @tsort_strings, "$_ $pkg\n"; } @relevant_depends;
     
     return (@tsort_strings,
-            generate_relevant_tsort_dependencies($newpkglist, $installed_add_ons,
-                                                 $progress_hash));
+            generate_relevant_tsort_dependencies_internals($newpkglist,
+                                                           $installed_add_ons,
+                                                           $progress_hash));
   }
 }
 
@@ -94,7 +105,7 @@ sub reorder_add_on_packages {
                                                      );
   my $tmpfile = `tempfile`; chomp $tmpfile;
 
-  # I normally like to use IO, but I'm not sure its in perl-base...
+  # I normally like to use IO, but I'm not sure it's in perl-base...
   open(TSORT, ">$tmpfile") or die "Couldn't save tsort input";
   print TSORT @depends;
   close(TSORT) or die "Couldn't close input";
