@@ -17,6 +17,8 @@ print "emacs-$action $flavor\n";
 
 my $dry_run = 0;
 
+require $lib_dir . "/generate-install-list";
+
 sub execute {
   my(@cmd) = @_;
   if($dry_run) {
@@ -34,9 +36,18 @@ my @installed_flavors = <FLAVORS>;
 close FLAVORS;
 chomp @installed_flavors;
 
+my $all_pkgs = installed_add_on_packages_list();
+my @ordered_pkg_list = generate_add_on_install_list($all_pkgs);
+
+# If it's a removal, dependency order must be reversed.
+if($action eq 'remove') {
+  @ordered_pkg_list = reverse @ordered_pkg_list;
+}
+
 map {
-  execute($_, $flavor, @installed_flavors) if -e $_;
-} glob($lib_dir . "/packages/$action/*");
+  my $script = $lib_dir . "/packages/$action/$_";
+  execute($script, $flavor, @installed_flavors) if -e $script;
+} @ordered_pkg_list;
 
 
 if($action eq 'install') {

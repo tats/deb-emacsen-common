@@ -40,6 +40,7 @@ binary-indep:	checkroot build
 
 	perl -wc emacs-install
 	perl -wc emacs-package-install
+	perl -wc generate-install-list
 
 	-rm -rf debian/tmp
 	install -d debian/tmp
@@ -69,6 +70,7 @@ binary-indep:	checkroot build
 	cp -a emacs-remove ${eclib}
 	cp -a emacs-package-install ${eclib}
 	cp -a emacs-package-remove ${eclib}
+	cp -a generate-install-list ${eclib}
 
 	install -d debian/tmp/var/lib/emacsen-common
 

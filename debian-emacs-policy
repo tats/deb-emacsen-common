@@ -5,83 +5,78 @@
   Improvements are welcome.
 
   Also, there will be some changes in the nearish future to allow
-  add-on packages that depend on (or can interact with) other add-on
-  packages to have their install/remove scripts called in the right
-  order, etc. ]
+  add-on packages to avoid (if they choose) rebuilding unnecessarily.
+]
 
-First, some terminology: when I say <emacs> below I mean
-{emacs,xemacs20,emacs19,emacs20}.  When I say <flavor>, I mean just
-one of (xemacs20 emacs19 emacs20).
+First, some terminology: when I say <emacs> below I mean one of (emacs
+xemacs20 emacs19 emacs20), but when I say <flavor>, I mean just one of
+(xemacs20 emacs19 emacs20).
 
-1) New common package.
+1) emacsen-common
 
-   There will be a new package, emacsen-common, which all of the
-   various flavors of emacs will depend on, and which will contain
-   emacs flavor independent files like debian-rundir and all the
-   infrastructure implementing our mechanism for dealing with all the
-   various emacsen.
+   Each flavor of emacs must depend on emacsen-common.  This package
+   contains all of the Debian specific emacs flavor independent files
+   like debian-rundir, and all the infrastructure implementing our
+   mechanism for dealing with all the various emacsen.
 
 2) Flavor indication
 
-   Each emacs binary will set the variable debian-emacs-flavor to be
+   Each emacs binary must set the variable debian-emacs-flavor to be
    the same as the name of the debian-package.  For example, the
-   emacs20 package would do this in startup.el: (setq
-   debian-emacs-flavor 'emacs20).
+   emacs20 package does this in startup.el like this:
+
+     (setq debian-emacs-flavor 'emacs20)
 
 3) Emacs startup strategy
 
-  We'll have the following startup files/directories:
+  We have the following startup files/directories:
 
   emacsen-common: /etc/emacs/site-start.{el,d}
   xemacs20:       /etc/xemacs20/site-start.d
   emacs19:        /etc/emacs19/site-start.d
   emacs20:        /etc/emacs20/site-start.d
 
-  /etc/emacs/site-start.el will now be a conffile, and will be owned
-  by a new package emacsen-common.  It will no longer have anything in
-  it at all by default, and the local admin can use it for whatever.
+  /etc/emacs/site-start.el is a conffile, and is owned by
+  emacsen-common.  This file should not be modified by *any* add-on
+  packages.  It is solely for the use of the local admin.
 
-  The load-path for a given emacs flavor will include /etc/<flavor>
-  and /etc/emacs in that order, and on startup each emacsen will call
+  The load-path for a given emacs flavor must include /etc/<flavor>
+  and /etc/emacs in that order, and on startup each emacsen must call
   (debian-startup) and then load "site-start".  This means that
   /etc/emacs/site-start.el will be loaded if it exists, unless there's
   an /etc/<flavor>/site-start.el{,c} or /etc/emacs/site-start.elc
   which will take precedence.
 
-  debian-startup will, for now, just turn into a call to
-  debian-run-directories whose behavior is slightly different from the
-  current debian-run-directory.
+  debian-startup, for now, just calls debian-run-directories.
+  debian-run-directories takes the union of all the file base names
+  (i.e. without any .el or .elc extension, and without the directory
+  component: i.e. /etc/xemacs/site-start.d/50foo.elc => foo).  Then
+  debian-startup temporarily augments the emacs load path to include
+  /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in that
+  order, and then calls (load base-name) in alphabetical order.
 
-  debian-run-directories will take the union of all the file base
-  names (i.e. without any .el or .elc extension, and without the
-  directory component: i.e. /etc/xemacs/site-start.d/50foo.elc =>
-  foo).  Then then emacs load-path will be temporarily augmented to
-  include /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in
-  that order.  Once the list of file base names has been determined,
-  emacs will call (load base-name) on each of them in alphabetical
-  order.  This means that .elc files will take precedence over .el
-  files in a given directory, and files in the <flavor> site-start.d
+  This result is that .elc files will take precedence over .el files
+  in a given directory, and files in the <flavor> site-start.d
   directory will take precedence over those in the emacs common
   directory.
 
 4) Code locations
 
-  In addition to the /etc/<emacs>/site-start* directories, we'll have
-  the following directories (their use will be described shortly).
+  In addition to the /etc/<emacs>/site-start* directories, we have the
+  following directories (their use will be described shortly):
 
   emacsen-common: /usr/share/emacs/site-lisp/
   xemacs20:       /usr/share/xemacs20/site-lisp/
   emacs19:        /usr/share/emacs19/site-lisp/
   emacs20:        /usr/share/emacs20/site-lisp/
 
-  These will be treated as part of the normal emacsen load path with
-  the <flavor> dir taking precedence over the emacs (common) dir.
+  These are treated as part of the normal emacsen load path with the
+  <flavor> dir taking precedence over the emacs (common) dir.
 
-  /usr/share/<flavor>/site-lisp will be a symlink to the normal
+  /usr/share/<flavor>/site-lisp must be a symlink to the normal
   site-lisp directory for that flavor of emacs.  For example:
 
     /usr/share/emacs20/site-lisp -> ../../emacs/20.2/site-lisp
-
 
 5) Packages with only marginal emacs relevance
 
@@ -91,7 +86,6 @@ one of (xemacs20 emacs19 emacs20).
    other reasons), then it is not necessary to specify a dependency on
    emacsen or any flavor of emacs, and the package may just include
    files located in the standard emacs add-on directories.
-
 
 6) Emacs add-on package support (there are examples later which make
    this much clearer)
@@ -128,9 +122,9 @@ one of (xemacs20 emacs19 emacs20).
        /usr/lib/emacsen-common/packages/install/foo emacs20 emacs20 xemacs20
        /usr/lib/emacsen-common/packages/install/foo xemacs20 emacs20 xemacs20
 
-     emacs-package remove would do the symmetric thing.
+     emacs-package remove does the symmetric thing.
 
-  B) Each emacsen main package will have a call to 
+  B) Each emacsen main package must have a call to
      "/usr/lib/emacsen-common/emacs-install <flavor> in its postinst
      and a call to "/usr/lib/emacsen-common/emacs-remove <flavor> in
      it's prerm.
@@ -156,20 +150,21 @@ one of (xemacs20 emacs19 emacs20).
        /etc/<emacs>/site-start.d
        /usr/share/<emacs>/site-lisp/<package-name>
 
-  D) Each add-on package needs to declare relevant dependencies on
-     other packages (including other add-on packages).  Note that
-     add-on packages should not depend on emacsen-common directly, but
-     rather on either the virtual package "emacsen" (see below), or
-     some appropriate combination of flavors (i.e. Depends: emacs20 |
+  D) Each add-on package must declare relevant dependencies on other
+     packages (including other add-on packages).  Note that add-on
+     packages should not depend on emacsen-common directly, but rather
+     on either the virtual package "emacsen" (see below), or some
+     appropriate combination of flavors (i.e. Depends: emacs20 |
      emacs19).  In addition, any tools needed by the install/remove
      scripts must be listed as package dependencies.  For example,
      many add-on packages will probably use make in the install
      script, so they need to add "Depends: make" to their control
-     file.
+     file.  emacsen-common will make sure that the install/remove
+     scripts are ordered to respect inter-add-on package dependencies.
 
 7) Mandatory binary symlink
 
-   Each emacsen main package will have a symlink
+   Each emacsen main package must have a symlink
    /usr/bin/<package-name> to /usr/bin/<emacs-binary> so that when
    add-on package install/remove scripts are called, they can just use
    /usr/bin/$ARGV[0] to get the right binary for byte-compilation.
@@ -187,8 +182,8 @@ one of (xemacs20 emacs19 emacs20).
 
 9) Emacs lisp load path.
 
-   At a minimum, each emacs will have the following in the given order
-   in their load path:
+   At a minimum, each emacs has the following directories in the given
+   order in their load path:
 
      /etc/<flavor>
      /etc/emacs
@@ -217,11 +212,18 @@ one of (xemacs20 emacs19 emacs20).
    autoloads for all the top level, user visible functions.  Currently
    the calc package has a good example of this.
 
+
+
 That's it.  I think this gives the add-on package maintainers the
 flexibility they need to be able to DTRT, and I think the common case
 won't be all that difficult.
 
-Examples:
+Examples (I've been told that there may be some bugs in these
+examples, but I haven't had time to check through them yet.  So don't
+take them as gospel at the moment.  I suggest that you loook at
+existing packages for examples of working code.  I will probably be
+revamping these soon, but I don't want to do it now since there are
+probably about to be some changes that will invalidate some of this):
 
 1) Xemacs20 and the add-on packages tm and auctex are already installed,
    and now someone installs emacs20.

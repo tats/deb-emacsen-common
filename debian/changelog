@@ -1,3 +1,18 @@
+emacsen-common (1.4.8) unstable; urgency=low
+
+  * Clean up old "emacs" info entry in postinst.
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sun, 26 Jul 1998 17:03:05 -0500
+
+emacsen-common (1.4.7) unstable; urgency=low
+
+  * First implementation of dependency sorting mechanism
+    Sorting mechanism is dirt slow since I have to use N "dpkg --status calls"  
+  * Added bsdmainutils dependency (tsort used by dependency mechanism)
+  * Minor edits to debian-emacs-policy.  Bigger changes brewing...
+
+ -- Rob Browning <rlb@cs.utexas.edu>  Sat, 25 Jul 1998 13:26:55 -0500
+
 emacsen-common (1.4.6) frozen unstable; urgency=low
 
   * debian-emacs-policy: add-on packages may not depend on emacsen-common.
