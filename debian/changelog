@@ -1,3 +1,47 @@
+emacsen-common (1.4.15) unstable; urgency=low
+
+  * make /etc/emacs/site-start.d/00debian-vars.el a conffile as per Debian
+    policy. (closes: Bug#132842)
+  * don't use dolist (not defined everywhere by default).
+    (closes: Bug#132352)
+  * document debian-pkg-add-load-path-item better and fix to actually
+    modify load-path. (closes: Bug#134464)
+  * make debian-unique-strings iterative since elisp isn't as recursion
+    friendly as we might like. (closes: Bug#131803)
+  * for now, issue a descriptive error message if emacsen-common is used
+    before it's configured.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 18 Feb 2002 11:42:31 -0600
+
+emacsen-common (1.4.14) unstable; urgency=low
+
+  * policy(9): /usr/local/share/emacs/<flavor>/site-lisp should not exist.
+  * policy(9): /usr/share/emacs/<upstream>/site-lisp should not exist.
+  * policy(9): all emacsen must have
+    /usr/share/emacsen-common/mark-end-local in their load-path in the
+    right place.
+  * policy(9): add-on packages must use debian-pkg-add-load-path-item to
+    augment the load-path now. (closes: #122877)
+  * fix non-idempotentency in prerm. (closes: #96702)
+  * remove bogus directories from package. (closes: #121393)
+  * fix generate-install-list dependency list generation bug. (closes: #46948)
+  * patch example in debian-emacs-policy. (closes: #23424)
+  * debian-startup.el: don't call load-file. (closes: #116126)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Tue, 29 Jan 2002 14:52:51 -0600
+
+emacsen-common (1.4.13) unstable; urgency=low
+
+  * Update my email address.
+  * Fix tmpfile usage. (closes: #26601, #45140)
+  * Move doc files to /usr/share/doc (closes: #91457, #72493)
+  * Remove execute permission from conffiles file. (closes: #61303)
+  * Updated policy concerning the long-standing problem with version
+    specific site-lisp dirs.  New policy, once adopted should eliminate
+    the cruft problem.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Tue, 17 Jul 2001 11:07:08 -0500
+
 emacsen-common (1.4.12) unstable frozen; urgency=low
 
   * Emergency changes to startup policy.  We're reverting for now to the
@@ -142,7 +186,3 @@ emacsen-common (1.0-1) unstable; urgency=low
   * Initial creation.
 
  -- Rob Browning <rlb@cs.utexas.edu>  Sun, 18 Jan 1998 13:35:05 -0600
-
-Local variables:
-mode: debian-changelog
-End:

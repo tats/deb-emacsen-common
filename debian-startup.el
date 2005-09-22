@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 1998 Rob Browning
 
-;; Maintainer: Rob Browning <rlb@cs.utexas.edu>
+;; Maintainer: Rob Browning <rlb@defaultvalue.org>
 ;; Keywords: debian
 
 ;; This file is part of the debian release of GNU Emacs, and will
@@ -29,16 +29,49 @@
 ;; This file contains startup code needed by all the various flavors
 ;; of Emacs for a Debian system.
 
-(defun debian-unique-strings (list) 
 
+(defun debian-pkg-add-load-path-item (item)
+  "Takes a path item (a string) and adds it to load path in the
+correct position for an add-on package, before the emacs system
+directories, but after the /usr/local/ directories.  After modifying
+load-path, returns the new load-path."
+  (let ((pos 0)
+        (last-local-pos nil)
+        (lp-rest load-path))
+    
+    ;; Find the last /usr/local/ element.
+    (while (not (null lp-rest))
+      (if (string-match "^/usr/local" (car lp-rest))
+          (setq last-local-pos pos))
+      (setq pos (+ pos 1))
+      (setq lp-rest (cdr lp-rest)))
+
+    (if (not last-local-pos)
+        (error "No /usr/local/ prefixed paths in load-path"))
+
+    (let ((result '())
+          (pos 0)
+          (remainder load-path))
+      (while (consp remainder)
+        (setq result (cons (car remainder) result))
+        (setq remainder (cdr remainder))
+        (if (= pos last-local-pos)
+            (setq result (cons item result)))
+        (setq pos (+ pos 1)))
+      (setq load-path (nreverse result))
+      load-path)))
+
+;; Rewritten to less elegant -- non recursive version because elisp
+;; doesn't seem to handle tail recursion :<
+(defun debian-unique-strings (strings) 
   "Takes a list of strings and returns the list with *adjacent*
 duplicates removed."
-
-  (if (null list)
-      '()
-    (if (string= (car list) (car (cdr list)))
-        (debian-unique-strings (cdr list))
-      (cons (car list) (debian-unique-strings (cdr list))))))
+  (let ((result '()))
+    (while (consp strings)
+      (if (not (string= (car strings) (car (cdr strings))))
+          (setq result (cons (car strings) result)))
+      (setq strings (cdr strings)))
+    (nreverse result)))
 
 (defun debian-run-directories (&rest dirs)
 
@@ -86,11 +119,9 @@ supercedes a .el file of the same name."
       ;; ordering.
       (mapcar
        (lambda (file)
-         (if debug-on-error
-             (load-file file)
-           (condition-case ()
-               (load file nil)
-             (error (message "Error while loading %s" file)))))
+         (condition-case ()
+             (load file nil)
+           (error (message "Error while loading %s" file))))
        base-names)
       ;; restore the old load-path -- including any new paths added by
       ;; files loaded in directory traversal.

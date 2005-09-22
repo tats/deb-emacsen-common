@@ -41,8 +41,9 @@ sub get_package_status {
 sub filter_depends {
   my($depends_string, $installed_add_ons) = @_;
 
-  # Filter out all the "noise" (version number dependencies, etc).
-  my @relevant_depends = split(',', $depends_string);
+  # Filter out all the "noise" (version number dependencies, etc)
+  # and handle or deps too "Depends: foo, bar | baz" 
+  my @relevant_depends = split(/[,|]/, $depends_string);
   @relevant_depends = map { /\s*(\S+)/o; $1; } @relevant_depends;
 
   # Filter out all non-add-on packages.
@@ -103,16 +104,23 @@ sub reorder_add_on_packages {
                                                      $installed_add_ons,
                                                      {}
                                                      );
-  my $tmpfile = `tempfile`; chomp $tmpfile;
 
-  # I normally like to use IO, but I'm not sure it's in perl-base...
-  open(TSORT, ">$tmpfile") or die "Couldn't save tsort input";
-  print TSORT @depends;
-  close(TSORT) or die "Couldn't close input";
+  my $pid = open(TSORT, "-|");
+  die "Couldn't fork for tsort: $!" unless defined($pid);
 
-  # print "TSORT:\n  " . join("  ", @depends);
+  # What a strange idiom...
+  if($pid == 0) {
+    my $sub_pid = open(IN, "|-");
+    die "Couldn't sub-fork for tsort: $!" unless defined($sub_pid);
+    if($sub_pid == 0) {
+      exec 'tsort' or die "Couldn't run tsort: $!";
+    }
+    print IN @depends;
+    exit 0;
+  }
+  my @ordered_pkgs = <TSORT>;
+  chomp @ordered_pkgs;
   
-  my @ordered_pkgs = `tsort < $tmpfile`; chomp @ordered_pkgs;
   return @ordered_pkgs
 }
 

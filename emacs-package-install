@@ -33,6 +33,20 @@ sub execute {
   }
 }
 
+# Make sure if we create any files, we do it safely.
+umask 0022 or die "emacs-package-$action: can't set umask, aborting.";
+
+if (! -e '/var/lib/emacsen-common/installed-flavors')
+{
+  die <<EOS;
+ERROR: emacsen-common being used before being configured.
+ERROR: This is likely a bug in the ${pkg} package, which needs to
+ERROR: add one of the appropriate dependencies.
+ERROR: See /usr/share/doc/emacsen-common/debian-emacs-policy.gz
+ERROR: for details.
+EOS
+}
+
 open FLAVORS, "<${var_dir}/installed-flavors" or
   die "emacs-package-$action: Couldn't open ${var_dir}/installed-flavors";
 my @installed_flavors = <FLAVORS>;

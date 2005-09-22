@@ -1,7 +1,7 @@
 Source: emacsen-common
 Section: editors
-Priority: standard
-Maintainer: Rob Browning <rlb@cs.utexas.edu>
+Priority: optional
+Maintainer: Rob Browning <rlb@defaultvalue.org>
 Standards-Version: 2.3.0
 
 Package: emacsen-common

@@ -2,6 +2,16 @@
 
 set -e
 
+if [ "$1" = "configure" ]
+then
+  if [ -d /usr/doc \
+       -a ! -e /usr/doc/emacsen-common \
+       -a -d /usr/share/doc/emacsen-common ]
+  then
+    ln -sf ../share/doc/emacsen-common /usr/doc/emacsen-common
+  fi
+fi
+
 if [ ! -e /usr/local/share ]
 then
   if mkdir /usr/local/share 2>/dev/null
@@ -31,6 +41,7 @@ fi
 
 if [ ! -e /var/lib/emacsen-common/installed-flavors ]
 then
+  # Be super-careful.
   echo -n "" > /var/lib/emacsen-common/installed-flavors
   chmod 644 /var/lib/emacsen-common/installed-flavors
   echo -n "" > /var/lib/emacsen-common/installed-flavors
@@ -39,6 +50,6 @@ fi
 /usr/lib/emacsen-common/emacs-package-install emacsen-common
 
 # Clean up dead emacs info entry...
-install-info --remove emacs > /dev/null 2>&1
+install-info --quiet --remove emacs
 
 exit 0
