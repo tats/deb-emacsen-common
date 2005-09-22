@@ -47,9 +47,7 @@
 (let ((mailname
        (debian-file->string "/etc/mailname" (function debian-clean-mailname))))
   (if (not mailname)
-      (progn
-	(message "No /etc/mailname. Reverting to default...")
-	(sit-for 3))
+      (message "No /etc/mailname. Reverting to default...")
     (setq mail-host-address mailname)))
 
 ;; Don't need to check NNTPSERVER for override, gnus does that for us.

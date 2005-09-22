@@ -41,7 +41,8 @@ load-path, returns the new load-path."
     
     ;; Find the last /usr/local/ element.
     (while (not (null lp-rest))
-      (if (string-match "^/usr/local" (car lp-rest))
+      (if (and (not (null (car lp-rest)))
+               (string-match "^/usr/local" (car lp-rest)))
           (setq last-local-pos pos))
       (setq pos (+ pos 1))
       (setq lp-rest (cdr lp-rest)))

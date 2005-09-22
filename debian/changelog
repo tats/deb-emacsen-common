@@ -1,3 +1,21 @@
+emacsen-common (1.4.16) unstable; urgency=high
+
+  * Fix sarge RC bug.  Alter debian-pkg-add-load-path-item to handle nil
+    in load-path.  Thanks to Manoj Srivastava.  (closes: 270388)
+  * Include section and priorty in dpkg-gencontrol generated control file.
+    (closes: 288752)
+  * Don't create /usr/doc/ symlinks anymore.
+  * Remove pause in 00debian-vars.el when there is no /etc/mailname.  The
+    message will always be available in *Messages*.  The real fix for this
+    may involve bug 149924.  (closes: 115116)
+  * Ignore *~ when generating package list.  Eventually we may do
+    something more like run-parts, but this is at least an improvement.
+    (ref: #29494)
+  * Make the package description a bit more elaborate.  (closes: 209469)
+  * Fix debian-emacs-policy typo.  (closes: 175779)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Thu, 27 Jan 2005 12:27:09 -0600
+
 emacsen-common (1.4.15) unstable; urgency=low
 
   * make /etc/emacs/site-start.d/00debian-vars.el a conffile as per Debian

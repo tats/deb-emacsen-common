@@ -283,7 +283,7 @@ generic "emacs" value.  i.e.:
    switch to using autoload rather than load when possible in their
    site-start.d files.
 
-   For example, instead of (load "some-package), you should use
+   For example, instead of (load "some-package"), you should use
    autoloads for all the top level, user visible functions.  Currently
    the calc package has a good example of this.
 

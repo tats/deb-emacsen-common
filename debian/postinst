@@ -2,16 +2,6 @@
 
 set -e
 
-if [ "$1" = "configure" ]
-then
-  if [ -d /usr/doc \
-       -a ! -e /usr/doc/emacsen-common \
-       -a -d /usr/share/doc/emacsen-common ]
-  then
-    ln -sf ../share/doc/emacsen-common /usr/doc/emacsen-common
-  fi
-fi
-
 if [ ! -e /usr/local/share ]
 then
   if mkdir /usr/local/share 2>/dev/null
@@ -50,6 +40,6 @@ fi
 /usr/lib/emacsen-common/emacs-package-install emacsen-common
 
 # Clean up dead emacs info entry...
-install-info --quiet --remove emacs
+install-info --remove --quiet emacs
 
 exit 0

@@ -24,23 +24,39 @@ target    := ${arch}-debian-linux-gnu
 CFLAGS    := -O2 -g
 
 eclib := debian/tmp/usr/lib/emacsen-common
-flavors := emacs19 emacs20 xemacs19 xemacs20 xemacs21 emacs21
+# flavors := emacs19 emacs20 emacs21 xemacs19 xemacs20 xemacs21 emacs21
 
-build:
+define checkdir
+	test -f debian/rules
+endef
+
+buildpackage:
+	$(checkdir)
+	dpkg-buildpackage -D -rfakeroot \
+	  -i'\\+\\+pristine-trees|\\+\\+saved.*|,,.*|{arch}|\.arch-ids' \
+	  -I"*/++*" \
+	  -I"*/,,*" \
+	  -I"*/{arch}" \
+	  -I"*/.arch-ids"
+.PHONY: buildpackage
+
+build: debian/stamp/build
+debian/stamp/build:
 	$(checkdir)
 	ln -sf emacs-install emacs-remove
 	ln -sf emacs-package-install emacs-package-remove
-	touch build
+	mkdir $(dir $@) && touch $@
 
 clean:
 	$(checkdir)
 	rm -f emacs-remove emacs-package-remove
 	find . -name "*~" -print0 | xargs -r -0 rm -f
 	find . -name "#*" -print0 | xargs -r -0 rm -f
-	rm -rf debian/tmp debian/files build
+	rm -rf debian/tmp debian/files debian/stamp
 
-binary-indep:	checkroot build
+binary-indep: debian/stamp/build
 	$(checkdir)
+	test root = "`whoami`"
 
 	perl -wc emacs-install
 	perl -wc emacs-package-install
@@ -102,15 +118,12 @@ binary-indep:	checkroot build
 	install --mode 755 debian/postrm debian/tmp/DEBIAN
 	install --mode 644 debian/conffiles debian/tmp/DEBIAN
 
-	dpkg-gencontrol -pemacsen-common
+	dpkg-gencontrol -isp -pemacsen-common
 	dpkg --build debian/tmp ..
 
-binary-arch:	checkroot build
+binary-arch: debian/stamp/build
 	$(checkdir)
-
-define checkdir
-	test -f debian/rules
-endef
+	test root = "`whoami`"
 
 # Below here is fairly generic really
 
@@ -119,8 +132,4 @@ binary:		binary-indep binary-arch
 source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
-checkroot:
-	$(checkdir)
-	test root = "`whoami`"
-
-.PHONY: binary binary-arch binary-indep clean checkroot
+.PHONY: binary binary-arch binary-indep clean build

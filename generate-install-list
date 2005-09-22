@@ -24,7 +24,7 @@ sub installed_add_on_packages_list {
   if(! defined(@$installed_add_on_pkgs)) {
     my $oldir = cwd();    
     chdir($lib_dir . "/packages/install/") or die "couldn't chdir";
-    @$installed_add_on_pkgs = glob("*");
+    @$installed_add_on_pkgs = glob("*[!~]");
     chdir($oldir);
   }
   return $installed_add_on_pkgs;
