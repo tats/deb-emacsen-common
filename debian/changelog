@@ -1,3 +1,17 @@
+emacsen-common (1.4.17) unstable; urgency=low
+
+  * Remove "Conflicts: emacs".  If I recall correctly, this dates back to
+    a time when the Emacs binary package was just named "emacs"
+    (i.e. unversioned), and before the creation of emacsen-common and the
+    Debian Emacs Policy.  The Conflicts should be safe to remove now, and
+    the removal will allow us to create a new emacs-defaults source
+    package (a la gcc-defaults) that will produce an emacs package that
+    always depends on the current "standard" version of Emacs
+    (i.e. emacs21, emacs22, etc.).
+  * Update to Standards-Version to 3.6.2.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Thu,  5 Jan 2006 18:10:56 -0800
+
 emacsen-common (1.4.16) unstable; urgency=high
 
   * Fix sarge RC bug.  Alter debian-pkg-add-load-path-item to handle nil

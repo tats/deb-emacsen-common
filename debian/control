@@ -2,10 +2,9 @@ Source: emacsen-common
 Section: editors
 Priority: optional
 Maintainer: Rob Browning <rlb@defaultvalue.org>
-Standards-Version: 2.3.0
+Standards-Version: 3.6.2
 
 Package: emacsen-common
-Conflicts: emacs
 Depends: bsdmainutils
 Architecture: all
 Description: Common facilities for all emacsen
