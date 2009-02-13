@@ -32,12 +32,7 @@ endef
 
 buildpackage:
 	$(checkdir)
-	dpkg-buildpackage -D -rfakeroot \
-	  -i'\\+\\+pristine-trees|\\+\\+saved.*|,,.*|{arch}|\.arch-ids' \
-	  -I"*/++*" \
-	  -I"*/,,*" \
-	  -I"*/{arch}" \
-	  -I"*/.arch-ids"
+	dpkg-buildpackage -D -us -uc -rfakeroot -i
 .PHONY: buildpackage
 
 build: debian/stamp/build
