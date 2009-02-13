@@ -3,7 +3,8 @@
 set -e
 
 FLAVOR=$1
-byte_compile_options="-batch -f batch-byte-compile"
+# Make sure these options are appropriate for the given package.
+compile_options="--no-init-file --no-site-file -batch -f batch-byte-compile"
 
 echo emacsen-common: Handling install of emacsen flavor ${FLAVOR}
 
@@ -34,7 +35,7 @@ then
      /usr/share/${FLAVOR}/site-lisp/debian-startup.el 
 
   # byte compile everything.
-  ${FLAVOR} ${byte_compile_options} \
+  ${FLAVOR} ${compile_options} \
     /etc/${FLAVOR}/site-start.d/00debian-vars.el \
     /usr/share/${FLAVOR}/site-lisp/debian-startup.el
 

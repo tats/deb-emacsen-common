@@ -1,3 +1,12 @@
+emacsen-common (1.4.18) unstable; urgency=low
+
+  * Add --no-site-file and --no-init-file for the compilation of
+    emacsen-common's .elc files.  Those options should be fine for
+    emacsen-common itself right now.  Thanks to Peter S Galbraith
+    <psg@debian.org>.  (closes: 132355)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Thu, 12 Feb 2009 22:38:24 -0800
+
 emacsen-common (1.4.17) unstable; urgency=low
 
   * Remove "Conflicts: emacs".  If I recall correctly, this dates back to
