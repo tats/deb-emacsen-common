@@ -117,7 +117,7 @@ generic "emacs" value.  i.e.:
   then calls debian-run-directories.  debian-run-directories takes the
   union of all the file base names (i.e. without any .el or .elc
   extension, and without the directory component:
-  i.e. /etc/xemacs/site-start.d/50foo.elc => foo).  Then
+  i.e. /etc/xemacs/site-start.d/50foo.elc => 50foo).  Then
   debian-startup temporarily augments the emacs load path to include
   /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in that
   order, and then calls (load base-name) in alphabetical order.

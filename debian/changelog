@@ -5,7 +5,10 @@ emacsen-common (1.4.18) unstable; urgency=low
     emacsen-common itself right now.  Thanks to Peter S Galbraith
     <psg@debian.org>.  (closes: 132355)
 
- -- Rob Browning <rlb@defaultvalue.org>  Thu, 12 Feb 2009 22:38:24 -0800
+  * Fix minor documentation bug.  Thanks to Roland Stigge
+    <stigge@antcom.de>. (closes: 208414)
+
+ --
 
 emacsen-common (1.4.17) unstable; urgency=low
 
