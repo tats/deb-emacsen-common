@@ -120,9 +120,10 @@ supercedes a .el file of the same name."
       ;; ordering.
       (mapcar
        (lambda (file)
-         (condition-case ()
+         (condition-case err
              (load file nil)
-           (error (message "Error while loading %s" file))))
+           (error (message "Error while loading %s: %s"
+                           file (error-message-string err)))))
        base-names)
       ;; restore the old load-path -- including any new paths added by
       ;; files loaded in directory traversal.

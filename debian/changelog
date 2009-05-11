@@ -8,7 +8,11 @@ emacsen-common (1.4.18) unstable; urgency=low
   * Fix minor documentation bug.  Thanks to Roland Stigge
     <stigge@antcom.de>. (closes: 208414)
 
- --
+  * Print the error message when debian-run-directories encounters an
+    error while loading a file.  Thanks to Kevin Ryde <user42@zip.com.au>.
+    (closes: 329030)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 10 May 2009 20:52:52 -0700
 
 emacsen-common (1.4.17) unstable; urgency=low
 
