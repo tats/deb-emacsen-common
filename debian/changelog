@@ -7,13 +7,16 @@ emacsen-common (1.4.19) unstable; urgency=low
   * Fix some suspicious code in the sample package install/remove scripts.
     Thanks to Kevin Ryde <user42@zip.com.au>. (closes: 424940)
 
+  * Update debian-file->string to use insert-file-contents-literally.
+    Thanks to Jari Aalto <jari.aalto@poboxes.com>. (closes: 269155)
+
   * Thanks to Agustin Martin Domingo <agmartin@debian.org> for collecting
     and incorporating many of the fixes in the previous release, this
     release, and probably the next several releases into his git
     repository.  That work is being used heavily as a reference during
     these updates.
 
- -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 15:15:08 -0700
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 15:31:39 -0700
 
 emacsen-common (1.4.18) unstable; urgency=low
 

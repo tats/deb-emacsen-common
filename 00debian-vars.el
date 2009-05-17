@@ -1,7 +1,7 @@
 ;; 00debian-vars.el
 ;;
 ;; Initialize some emacs variables from debian policy files.
-;; 
+;;
 ;; Copyright (C) 1997, Frederic Lepied <Frederic.Lepied@sugix.frmug.org>
 ;;
 ;; original Author: Frederic Lepied <Frederic.Lepied@sugix.frmug.org>
@@ -25,16 +25,13 @@
   (interactive "fFile name : ")
   (let ((filename (expand-file-name name)))
     (if (not (file-readable-p filename))
-	nil
-      (let ((buf (create-file-buffer filename))
-	    ret)
-	(save-excursion
-	  (set-buffer buf)
-	  (insert-file-contents filename)
-	  (if func (funcall func))
-	  (setq ret (buffer-string)))
-	(kill-buffer buf)
-	ret))))
+        nil
+      (with-temp-buffer
+        ;; Do not run any user `find-file-hooks'
+        (insert-file-contents-literally filename)
+        (if func
+            (funcall func))
+        (buffer-string)))))
 
 (defun debian-clean-mailname ()
   (while (search-forward "\n" nil t)
