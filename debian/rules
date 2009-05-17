@@ -95,6 +95,8 @@ binary-indep: debian/stamp/build
 	install -d debian/tmp/usr/share/doc/emacsen-common
 	cp debian/changelog debian/tmp/usr/share/doc/emacsen-common/
 	cp debian-emacs-policy debian/tmp/usr/share/doc/emacsen-common/
+	cp sample-package-install-foo  debian/tmp/usr/share/doc/emacsen-common/
+	cp sample-package-remove-foo  debian/tmp/usr/share/doc/emacsen-common/
 	find debian/tmp/usr/share/doc/emacsen-common -type f \
 	  | xargs gzip -9v
 	cp debian/copyright debian/tmp/usr/share/doc/emacsen-common

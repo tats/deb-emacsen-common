@@ -1,3 +1,11 @@
+emacsen-common (1.4.19) unstable; urgency=low
+
+  * Move the sample package install/remove scripts from
+    debian-emacs-policy to the files sample-package-install-foo and
+    sample-package-remove-foo in /usr/share/doc/emacsen-common.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 14:27:58 -0700
+
 emacsen-common (1.4.18) unstable; urgency=low
 
   * Add --no-site-file and --no-init-file for the compilation of
