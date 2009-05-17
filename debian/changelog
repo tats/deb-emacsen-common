@@ -11,13 +11,18 @@ emacsen-common (1.4.19) unstable; urgency=low
     Change gnus-nntpserver-file defvar to setq.  Thanks to Jari Aalto
     <jari.aalto@poboxes.com>. (closes: 269155)
 
+  * Always call debian-run-directories.  Previously a bug would prevent it
+    from running if debian-emacs-flavor wasn't set.  Thanks to Francesco
+    Potorti` <pot@gnu.org> and Andrew Kemp <ajwk@pell.uklinux.net>.
+    (closes: 222518, 136779)
+
   * Thanks to Agustin Martin Domingo <agmartin@debian.org> for collecting
     and incorporating many of the fixes in the previous release, this
     release, and probably the next several releases into his git
     repository.  That work is being used heavily as a reference during
     these updates.
 
- -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 15:34:30 -0700
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 15:42:24 -0700
 
 emacsen-common (1.4.18) unstable; urgency=low
 

@@ -150,11 +150,11 @@ supercedes a .el file of the same name."
   ;; right now, but I'll come back later and make all this cleaner and
   ;; better documented.  Sorry.
 
-  (if (not (boundp 'debian-emacs-flavor))
-      (defconst debian-emacs-flavor flavor
-        "A symbol representing the particular debian flavor of emacs that's
-running.  Something like 'emacs20, 'xemacs20, etc.")
-        
-    (let ((common-dir "/etc/emacs/site-start.d")
-          (flavor-dir (concat "/etc/" (symbol-name flavor) "/site-start.d")))
-      (debian-run-directories flavor-dir common-dir))))
+  (unless (boundp 'debian-emacs-flavor)
+    (defconst debian-emacs-flavor flavor
+      "A symbol representing the particular debian flavor of emacs that's
+running.  Something like 'emacs20, 'xemacs20, etc."))
+
+  (let ((common-dir "/etc/emacs/site-start.d")
+        (flavor-dir (concat "/etc/" (symbol-name flavor) "/site-start.d")))
+    (debian-run-directories flavor-dir common-dir)))
