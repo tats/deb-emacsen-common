@@ -1,6 +1,6 @@
 #!/bin/sh
 # /usr/lib/emacsen-common/packages/remove/foo
-# [ This particular script hasn't been tested either, so be careful. ]
+# [ Sample only -- this script hasn't been tested, so be careful. ]
 set -e
 
 FLAVOR=$1
@@ -12,6 +12,7 @@ if [ ${FLAVOR} != emacs ]
 then
   echo emacsen-common: purging byte-compiled files for ${FLAVOR}
   rm -f ${elc_dir}/*.elc
-  [ -d ${elc_dir} -a `ls -la ${elc_dir}|wc -l` -gt 3 ] && rmdir ${elc_dir}
+  rm -f ${elc_dir}/*.el         # Install might have been interrupted.
+  rmdir --ignore-fail-on-non-empty ${elc_dir}
 fi
 exit 0;

@@ -4,7 +4,10 @@ emacsen-common (1.4.19) unstable; urgency=low
     debian-emacs-policy to the files sample-package-install-foo and
     sample-package-remove-foo in /usr/share/doc/emacsen-common.
 
- -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 14:27:58 -0700
+  * Fix some suspicious code in the sample package install/remove scripts.
+    Thanks to Kevin Ryde <user42@zip.com.au>. (closes: 424940)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 May 2009 15:13:49 -0700
 
 emacsen-common (1.4.18) unstable; urgency=low
 

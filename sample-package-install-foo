@@ -1,6 +1,6 @@
 #!/bin/sh
 # /usr/lib/emacsen-common/packages/install/foo
-# [ This particular script hasn't been tested, so be careful. ]
+# [ Sample only -- this script hasn't been tested, so be careful. ]
 set -e
 
 FLAVOR=$1
