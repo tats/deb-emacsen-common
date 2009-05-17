@@ -14,6 +14,10 @@
 
 ;;;###
 
+(eval-when-compile
+  ;; Quiet byte compiler
+  (defvar gnus-nntpserver-file))
+
 ;;;***
 
 
@@ -49,6 +53,6 @@
 
 ;; Don't need to check NNTPSERVER for override, gnus does that for us.
 (if (file-readable-p "/etc/news/server")
-    (defvar gnus-nntpserver-file "/etc/news/server"))
+    (setq gnus-nntpserver-file "/etc/news/server"))
 
 ;;; 00debian-vars.el ends here
