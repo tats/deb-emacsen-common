@@ -1,3 +1,9 @@
+emacsen-common (1.4.20) unstable; urgency=low
+
+  * Update debian-emacs-policy to correctly reflect current usage.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 29 Nov 2010 21:15:48 -0600
+
 emacsen-common (1.4.19) unstable; urgency=low
 
   * Move the sample package install/remove scripts from

@@ -1,31 +1,28 @@
 -*-indented-text-*-
 
-[ Due to a general lack of time, this document is way too terse, and
-  should be better organized, so be prepared to suffer a little.
-  Improvements are welcome.
+First, for the purposes of this policy, some terminology:
 
-  Also, there will be some changes in the nearish future to allow
-  add-on packages to avoid (if they choose) rebuilding unnecessarily.
-]
+  <flavor> - a particular flavor of Emacs, for example:
 
-First, some terminology: when I say <emacs> below I mean one of the
-following:
+    xemacs20
+    xemacs21
+    emacs21
+    emacs22
+    emacs23
 
-  emacs
-  xemacs20
-  xemacs21
-  emacs19
-  emacs20
-  emacs21
+  <emacs> - either a <flavor> or the generic value "emacs", i.e.:
 
-but when I say <flavor>, I mean one the same list as above, minus the
-generic "emacs" value.  i.e.:
+    emacs
+    xemacs20
+    xemacs21
+    emacs21
+    emacs22
+    emacs23
 
-  xemacs20
-  xemacs21
-  emacs19
-  emacs20
-  emacs21
+  add-on package - any package which wishes to use the emacsen-common
+    infrastructure, usually in order to byte-compile itself for some
+    subset of the currently installed emacs flavors.
+
 
 1) emacsen-common
 
@@ -36,32 +33,23 @@ generic "emacs" value.  i.e.:
 
 2) Flavor indication
 
-   [ NOTE: I am at least temporarily rescinding my recent changes (the
-     ones detailed below).  Though aesthetically appealing, they have
-     caused too much trouble.  For now (at least for Debian's current
-     frozen release), please revert to the previous behavior of
-     setting debian-emacs-flavor early in your particular emacsen's
-     startup process and regardless of the setting of -q or
-     --no-site-file.
+   Each emacs binary must set the variable debian-emacs-flavor to be
+   the same as the name of the debian-package.  For example, the
+   emacs20 package does this in startup.el:
 
-     I believe that this reversion also means that emacsen maintainers
-     can remove the emacsen-common version dependency...
+     (defconst debian-emacs-flavor 'emacs23
+       "A symbol representing the particular debian flavor of emacs running.
+     Something like 'emacs20, 'xemacs20, etc.")
+         (setq debian-emacs-flavor 'emacs20)
 
-     Thanks, and sorry for the short notice. (rlb). ]
+   For now, debian-emacs-flavor should be defined regardless of the
+   use of -q or --no-site-file.
 
-   Each emacs binary must indicate it's "flavor" which must be the
-   same as the name of the debian package.  This is now handed with an
-   argument to the debian-startup function discussed later.  For
-   example, the emacs21 package does this in startup.el like this:
-
-     (debian-startup 'emacs21)
-
-   This is a change from previous versions of emacsen-common.  Once a
-   flavor has been modified to follow this new approach, it should add
-   a depends line to make sure the right version of emacsen common is
-   installed: "Depends: emacsen-common (>= 1.4.10)".  This change
-   provides a better abstraction, and it minimizes the amount of code
-   we have to insinuate into startup.el.
+   [ NOTE: We may eventually consider moving debian-emacs-flavor to
+     emacsen-common and have emacsen-common set it based on the
+     argument to debian-startup.  That would minimize changes to
+     startup.el, but it was attempted briefly in the past, too close
+     to a freeze, and caused enough trouble that we backed off.]
 
 3) Emacs startup strategy
 
@@ -70,9 +58,8 @@ generic "emacs" value.  i.e.:
   emacsen-common: /etc/emacs/site-start.{el,d}
   xemacs20:       /etc/xemacs20/site-start.d
   xemacs21:       /etc/xemacs21/site-start.d
-  emacs19:        /etc/emacs19/site-start.d
-  emacs20:        /etc/emacs20/site-start.d
   emacs21:        /etc/emacs21/site-start.d
+  emacs23:        /etc/emacs23/site-start.d
 
   /etc/emacs/site-start.el is a conffile, and is owned by
   emacsen-common.  This file should not be modified by *any* add-on
@@ -82,20 +69,21 @@ generic "emacs" value.  i.e.:
 
   The load-path for a given emacs flavor must include /etc/<flavor>
   and /etc/emacs in that order (see section 9 below), and on startup
-  each emacsen must call (debian-startup) and then load "site-start".
-  This means that /etc/emacs/site-start.el will be loaded if it
-  exists, unless there's an /etc/<flavor>/site-start.el{,c} or
-  /etc/emacs/site-start.elc which will take precedence.  These
-  site-start.el files are also the sole domain of the local system
-  admin, and should be empty unless modified by the local admin.
+  each emacsen must call (debian-startup <flavor>) and then load
+  "site-start".  This means that /etc/emacs/site-start.el will be
+  loaded if it exists, unless there's an
+  /etc/<flavor>/site-start.el{,c} or /etc/emacs/site-start.elc which
+  will take precedence.  These site-start.el files are also the sole
+  domain of the local system admin, and should be empty unless
+  modified by the local admin.
 
   Given that the site-startup.el files are "off-limits" to the emacsen
-  maintainers, the next question is, "From where can we run
+  maintainers, the next question is, "Where should we run
   debian-startup?"  The safest possibility, and the one I had
   originally intended was to modify lisp/startup.el to do the right
   thing, and I had also intended that --no-site-file would disable all
-  of the debian startup bits, including calling debian startup.  So I
-  did this in emacs21's startup.el:
+  of the debian startup bits, including calling debian startup.  So
+  here's what emacs21 had in startup.el:
 
     ;; Debian version of site-start.
     (if site-run-file
@@ -113,12 +101,11 @@ generic "emacs" value.  i.e.:
   sure that would work right.  Feel free to contact me if you know
   better.
 
-  debian-startup, among other things, sets debian-emacs-flavor and
-  then calls debian-run-directories.  debian-run-directories takes the
-  union of all the file base names (i.e. without any .el or .elc
-  extension, and without the directory component:
-  i.e. /etc/xemacs/site-start.d/50foo.elc => 50foo).  Then
-  debian-startup temporarily augments the emacs load path to include
+  debian-startup, among other things, calls debian-run-directories.
+  debian-run-directories collects the union of all the file base names
+  (i.e. without any .el or .elc extension, and without the directory
+  component: i.e. /etc/xemacs/site-start.d/50foo.elc => 50foo), then
+  temporarily augments the emacs load path to include
   /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in that
   order, and then calls (load base-name) in alphabetical order.
 
@@ -135,9 +122,8 @@ generic "emacs" value.  i.e.:
   emacsen-common: /usr/share/emacs/site-lisp/
   xemacs20:       /usr/share/xemacs20/site-lisp/
   xemacs21:       /usr/share/xemacs21/site-lisp/
-  emacs19:        /usr/share/emacs19/site-lisp/
-  emacs20:        /usr/share/emacs20/site-lisp/
-  emacs21:        /usr/share/emacs21/site-lisp/
+  emacs22:        /usr/share/emacs22/site-lisp/
+  emacs23:        /usr/share/emacs23/site-lisp/
 
   These are treated as part of the normal emacsen load path with the
   <flavor> dir taking precedence over the emacs (common) dir.
@@ -145,9 +131,9 @@ generic "emacs" value.  i.e.:
   /usr/share/<flavor>/site-lisp should be used instead of the normal
   site-lisp directory for that flavor of emacs, and the package for a
   given flavor of emacs should not have the normal site-lisp
-  directory.  For example, instead of the emacs21 package having
-  /usr/share/emacs/21.1/site-lisp, it should only have
-  /usr/share/emacs21/site-lisp.  This is important because it allows
+  directory.  For example, instead of the emacs23 package having
+  /usr/share/emacs/23.2/site-lisp, it should only have
+  /usr/share/emacs23/site-lisp.  This is important because it allows
   us to avoid having dangling directories for old versions across
   upgrades.  We could have chosen to keep a compatibility symlink, but
   that seemed likely to mask bugs in the debianized packages.
@@ -179,29 +165,30 @@ generic "emacs" value.  i.e.:
 
      in the prerm.
 
-     For now, "emacs-package-install foo" will conceptually just turn
-     into a call for the common package emacs, and for each installed
-     flavor to
+     For now, "emacs-package-install foo" will effectively just result
+     in a call to
 
        /usr/lib/emacsen-common/packages/install/foo
+
+     for the common package emacs, and for each installed flavor.
 
      The arguments to these scripts will be the flavor being installed
      (or just the common name "emacs") followed by a list of other
      flavors already installed, potentially including the current one.
 
-     So if emacs21 and xemacs21 were installed, installing foo would
+     So if emacs23 and xemacs21 were installed, installing foo would
      result in calls to:
 
-       /usr/lib/emacsen-common/packages/install/foo emacs emacs21 xemacs21
-       /usr/lib/emacsen-common/packages/install/foo emacs21 emacs21 xemacs21
-       /usr/lib/emacsen-common/packages/install/foo xemacs21 emacs21 xemacs21
+       /usr/lib/emacsen-common/packages/install/foo emacs emacs23 xemacs21
+       /usr/lib/emacsen-common/packages/install/foo emacs23 emacs23 xemacs21
+       /usr/lib/emacsen-common/packages/install/foo xemacs21 emacs23 xemacs21
 
      emacs-package remove does the symmetric thing.
 
   B) Each emacsen main package must have a call to
      "/usr/lib/emacsen-common/emacs-install <flavor> in its postinst
      and a call to "/usr/lib/emacsen-common/emacs-remove <flavor> in
-     it's prerm.
+     its prerm.
 
      The emacs-install script (for now) just executes
 
@@ -228,7 +215,7 @@ generic "emacs" value.  i.e.:
      packages (including other add-on packages).  Note that add-on
      packages should not depend on emacsen-common directly, but rather
      on either the virtual package "emacsen" (see below), or some
-     appropriate combination of flavors (i.e. Depends: emacs21 |
+     appropriate combination of flavors (i.e. Depends: emacs23 |
      emacs10).  In addition, any tools needed by the install/remove
      scripts must be listed as package dependencies.  For example,
      many add-on packages will probably use make in the install
@@ -267,7 +254,7 @@ generic "emacs" value.  i.e.:
      /usr/share/emacs/site-lisp
 
    where <upstream> is the normal emacs upstream version number for
-   the relevant flavor like 20.2 or 19.34.
+   the relevant flavor like 20.2 or 23.2.
 
    Emacs add-on packages may not modify load-path directly.  They must
    use (debian-pkg-add-load-path-item <path>).  This function will
@@ -300,45 +287,45 @@ existing packages for examples of working code.  I will probably be
 revamping these soon, but I don't want to do it now since there are
 probably about to be some changes that will invalidate some of this):
 
-1) Xemacs21 and the add-on packages tm and auctex are already installed,
-   and now someone installs emacs21.
+1) xemacs21 and the add-on packages tm and auctex are already installed,
+   and now someone installs emacs23.
 
-   In it's postinst, emacs21 would make this call:
+   In its prerm, emacs23 would make this call:
 
-     /usr/lib/emacsen-common/emacs-install emacs21
+     /usr/lib/emacsen-common/emacs-install emacs23
 
    which would result in calls to
 
      /usr/lib/emacsen-common/packages/install/auctex emacs xemacs21
-     /usr/lib/emacsen-common/packages/install/auctex emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/emacs21/install/tm emacs xemacs21
-     /usr/lib/emacsen-common/packages/emacs/install/tm emacs21 xemacs21
+     /usr/lib/emacsen-common/packages/install/auctex emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/emacs23/install/tm emacs xemacs21
+     /usr/lib/emacsen-common/packages/emacs/install/tm emacs23 xemacs21
     
 2) Now, given (1), assume that someone removes xemacs21.
 
-   In it's postinst, xemacs21 would make this call:
+   In its prerm, xemacs21 would make this call:
 
      /usr/lib/emacsen-common/emacs-remove xemacs21
 
    which would result in calls to
 
-     /usr/lib/emacsen-common/packages/remove/auctex emacs emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/remove/auctex xemacs21 emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm emacs emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs21 xemacs21
+     /usr/lib/emacsen-common/packages/remove/auctex emacs emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/auctex xemacs21 emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm emacs emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs23 xemacs21
 
-3) Now assume emacs21 and xemacs21 are installed, and that someone removes
+3) Now assume emacs23 and xemacs21 are installed, and that someone removes
    tm.
 
    The call to emacsen-package-remove in tm's prerm will result in
    the following calls:
 
-     /usr/lib/emacsen-common/packages/remove/tm emacs emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm emacs21 emacs21 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs21 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm emacs emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm emacs23 emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs23 xemacs21
 
    In the remove/tm file, tm is responsible for cleaning up any files
-   it put into it's allowed locations:
+   it put into its allowed locations:
 
      /etc/<emacs>/site-start.d/
      /usr/share/<emacs>/site-lisp/tm
