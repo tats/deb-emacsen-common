@@ -1,3 +1,10 @@
+emacsen-common (1.4.21) unstable; urgency=medium
+
+  * Don't print a message if /etc/mailname doesn't exist.  Thanks to Josh
+    Triplett <josh@joshtriplett.org> for the report. (closes: 427757)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Tue, 30 Nov 2010 17:57:47 -0600
+
 emacsen-common (1.4.20) unstable; urgency=medium
 
   * Update debian-emacs-policy to correctly reflect current usage.
