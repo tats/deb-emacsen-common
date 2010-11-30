@@ -39,7 +39,4 @@ fi
 
 /usr/lib/emacsen-common/emacs-package-install emacsen-common
 
-# Clean up dead emacs info entry...
-install-info --remove --quiet emacs
-
 exit 0
