@@ -1,8 +1,13 @@
-emacsen-common (1.4.20) unstable; urgency=low
+emacsen-common (1.4.20) unstable; urgency=medium
 
   * Update debian-emacs-policy to correctly reflect current usage.
 
- -- Rob Browning <rlb@defaultvalue.org>  Mon, 29 Nov 2010 21:15:48 -0600
+  * Don't call install-info to remove old emacs entry in the postinst.
+    It's been many years since the last package created that entry.
+    Thanks to Marco Nenciarini <mnencia@debian.org> for the
+    report. (closes: 604164)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 29 Nov 2010 21:26:02 -0600
 
 emacsen-common (1.4.19) unstable; urgency=low
 
