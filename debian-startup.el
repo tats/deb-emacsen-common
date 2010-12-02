@@ -118,7 +118,7 @@ supercedes a .el file of the same name."
       ;; Now load the files.  "load" will make sure we get the byte
       ;; compiled one first, if any, and will respect load-path's
       ;; ordering.
-      (mapcar
+      (mapc
        (lambda (file)
          (condition-case err
              (load file nil)

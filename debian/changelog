@@ -1,3 +1,11 @@
+emacsen-common (1.4.22) unstable; urgency=medium
+
+  * Call mapc instead of mapcar in debian-startup.el since mapcar was only
+    being called for side-effects.  Thanks to "Trent W. Buck"
+    <trentbuck@gmail.com> for the report. (closes: 530961)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Wed, 01 Dec 2010 21:46:10 -0600
+
 emacsen-common (1.4.21) unstable; urgency=medium
 
   * Don't print a message if /etc/mailname doesn't exist.  Thanks to Josh
