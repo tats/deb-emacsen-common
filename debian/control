@@ -5,7 +5,6 @@ Maintainer: Rob Browning <rlb@defaultvalue.org>
 Standards-Version: 3.6.2
 
 Package: emacsen-common
-Depends: bsdmainutils
 Architecture: all
 Description: Common facilities for all emacsen
  This package contains code that is needed by all the (x)emacs
