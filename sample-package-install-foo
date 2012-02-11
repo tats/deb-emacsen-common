@@ -17,15 +17,15 @@ then
 
   [ -d ${elc_dir} ] || mkdir ${elc_dir}
 
-  # Copy the temp .el files
-  (cd ${el_dir} && cp ${el_files} ${elc_dir})
+  # Create symlinks to the .el files (see section 6E in debian-emacs polcy).
+  (cd ${elc_dir}
+    for el in ${el_files}
+    do
+      ln -s ../../emacs/site-lisp/foo/$el .
+    done)
 
   # Byte compile them
-  (cd ${elc_dir} \
-   && ${FLAVOR} ${byte_compile_options} ${el_files} 2> /dev/null)
-
-  # remove the redundant .el files
-  # presumes that any .el files in the <flavor> dir are trash.
-  rm ${elc_dir}/*.el
+  (cd ${elc_dir}
+    ${FLAVOR} ${byte_compile_options} ${el_files} 2> /dev/null)
 fi
 exit 0;

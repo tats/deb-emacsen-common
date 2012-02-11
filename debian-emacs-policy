@@ -223,6 +223,19 @@ First, for the purposes of this policy, some terminology:
      file.  emacsen-common will make sure that the install/remove
      scripts are ordered to respect inter-add-on package dependencies.
 
+  E) If an add-on package compiles any of its Emacs Lisp sources
+     (which must be compiled to a subdirectory of
+     /usr/share/<flavor>/site-lisp/<package-name> -- see section 4
+     above) it must also create a symlink in the same directory as the
+     compiled output that points to the corresponding source file.
+
+     For example, if add-on package foo produces
+     /usr/share/emacs23/site-lisp/foo/bar.elc, then it must also
+     create a symlink /usr/share/emacs23/site-lisp/foo/bar.el pointing
+     to the corresponding source file.  This ensures that Emacs will
+     be able to locate the source code for the add-on package when
+     using M-x find-function, etc.
+
 7) Mandatory binary symlink
 
    Each emacsen main package must have a symlink
