@@ -1,10 +1,15 @@
-emacsen-common (1.4.23~1.gbp30c6df) UNRELEASED; urgency=low
+emacsen-common (1.4.23) unstable; urgency=low
 
-  ** SNAPSHOT build @30c6dfaee539caf741c4f00071bf38e60d5730d8 **
+  * Remove vestigal dependency on bsdmainutils.  Thanks to Sven Joachim
+    <svenjoac@gmx.de> for the report. (Closes: #480894)
 
-  * UNRELEASED
+  * Require add-on packages to create .el symlinks alongside .elc files.
+    Update debian-emacs-policy to require add-on packages to install a .el
+    symlink alongside each compiled .elc file.  Thanks to "Karl
+    M. Hegbloom" <karlheg@microsharp.com> for the original
+    report. (Closes: #122444)
 
- -- Rob Browning <rlb@defaultvalue.org>  Sat, 11 Feb 2012 15:47:20 -0600
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 11 Feb 2012 15:55:07 -0600
 
 emacsen-common (1.4.22) unstable; urgency=medium
 
