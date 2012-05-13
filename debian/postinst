@@ -2,41 +2,16 @@
 
 set -e
 
-if [ ! -e /usr/local/share ]
+# Convert installed-flavors to flavor/installed/*.
+if test -e /var/lib/emacsen-common/installed-flavors
 then
-  if mkdir /usr/local/share 2>/dev/null
-  then
-    chown root:staff /usr/local/share
-    chmod 2775 /usr/local/share
-  fi
+  for flavor in $(cat /var/lib/emacsen-common/installed-flavors)
+  do
+    touch "/var/lib/emacsen-common/state/flavor/installed/$flavor"
+  done
+  rm -f /var/lib/emacsen-common/installed-flavors
 fi
 
-if [ ! -e /usr/local/share/emacs ]
-then
-  if mkdir /usr/local/share/emacs 2>/dev/null
-  then
-    chown root:staff /usr/local/share/emacs
-    chmod 2775 /usr/local/share/emacs
-  fi
-fi
+/usr/lib/emacsen-common/emacs-package-install --postinst emacsen-common
 
-if [ ! -e /usr/local/share/emacs/site-lisp ]
-then
-  if mkdir /usr/local/share/emacs/site-lisp 2>/dev/null
-  then
-    chown root:staff /usr/local/share/emacs/site-lisp
-    chmod 2775 /usr/local/share/emacs/site-lisp
-  fi
-fi
-
-if [ ! -e /var/lib/emacsen-common/installed-flavors ]
-then
-  # Be super-careful.
-  echo -n "" > /var/lib/emacsen-common/installed-flavors
-  chmod 644 /var/lib/emacsen-common/installed-flavors
-  echo -n "" > /var/lib/emacsen-common/installed-flavors
-fi
-
-/usr/lib/emacsen-common/emacs-package-install emacsen-common
-
-exit 0
+#DEBHELPER#

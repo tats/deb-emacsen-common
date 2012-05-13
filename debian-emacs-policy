@@ -6,7 +6,6 @@ First, for the purposes of this policy, some terminology:
 
     xemacs20
     xemacs21
-    emacs21
     emacs22
     emacs23
 
@@ -15,7 +14,6 @@ First, for the purposes of this policy, some terminology:
     emacs
     xemacs20
     xemacs21
-    emacs21
     emacs22
     emacs23
 
@@ -23,24 +21,36 @@ First, for the purposes of this policy, some terminology:
     infrastructure, usually in order to byte-compile itself for some
     subset of the currently installed emacs flavors.
 
+  <package> - the name of an add-on package, for example:
 
-1) emacsen-common
+    auctex
+    bbdb
+    gnus
 
-   Each flavor of emacs must depend on emacsen-common.  This package
-   contains all of the Debian specific emacs flavor independent files
-   like debian-rundir, and all the infrastructure implementing our
-   mechanism for dealing with all the various emacsen.
+1) Guarding use of emacsen-common infrastructure
+
+   Any use of the emacsen-common infrastructure must be guarded by a
+   test for the existence of the emacsen-common installed state
+   file. i.e.:
+
+     if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
+     then
+        emacs-package-install ...
+     fi
+
+   Of course this requirement does not apply for the maintainer
+   scripts of any package that depends on emacsen-common (i.e. for
+   each emacsen main <flavor> package: emacs23, etc.).
 
 2) Flavor indication
 
    Each emacs binary must set the variable debian-emacs-flavor to be
    the same as the name of the debian-package.  For example, the
-   emacs20 package does this in startup.el:
+   emacs23 package does this in startup.el:
 
      (defconst debian-emacs-flavor 'emacs23
        "A symbol representing the particular debian flavor of emacs running.
      Something like 'emacs20, 'xemacs20, etc.")
-         (setq debian-emacs-flavor 'emacs20)
 
    For now, debian-emacs-flavor should be defined regardless of the
    use of -q or --no-site-file.
@@ -58,7 +68,7 @@ First, for the purposes of this policy, some terminology:
   emacsen-common: /etc/emacs/site-start.{el,d}
   xemacs20:       /etc/xemacs20/site-start.d
   xemacs21:       /etc/xemacs21/site-start.d
-  emacs21:        /etc/emacs21/site-start.d
+  emacs22:        /etc/emacs22/site-start.d
   emacs23:        /etc/emacs23/site-start.d
 
   /etc/emacs/site-start.el is a conffile, and is owned by
@@ -68,7 +78,7 @@ First, for the purposes of this policy, some terminology:
   admin modifies it.
 
   The load-path for a given emacs flavor must include /etc/<flavor>
-  and /etc/emacs in that order (see section 9 below), and on startup
+  and /etc/emacs in that order (see section 8 below), and on startup
   each emacsen must call (debian-startup <flavor>) and then load
   "site-start".  This means that /etc/emacs/site-start.el will be
   loaded if it exists, unless there's an
@@ -82,20 +92,20 @@ First, for the purposes of this policy, some terminology:
   debian-startup?"  The safest possibility, and the one I had
   originally intended was to modify lisp/startup.el to do the right
   thing, and I had also intended that --no-site-file would disable all
-  of the debian startup bits, including calling debian startup.  So
-  here's what emacs21 had in startup.el:
+  of the Debian startup bits, including calling Debian startup.  So
+  here's what emacs23 has in startup.el:
 
-    ;; Debian version of site-start.
-    (if site-run-file
+    ;; Debian startup
+     (if site-run-file
         (progn
-          ;; Load all the debian package snippets.
+          ;; Load all the Debian package snippets.
           ;; It's in here because we want -q to kill it too.
           (if (load "debian-startup" t t nil)
-              (debian-startup 'emacs21))
+              (debian-startup debian-emacs-flavor))
           ;; Now the normal site file...
           (load site-run-file t t nil)))
 
-  This makes sure that debian's bits are setup as early as possible,
+  This makes sure that Debian's bits are setup as early as possible,
   and requires only minor modifications to the emacs source.  An
   alternate possibility might be to use lisp/site-init.el, but I'm not
   sure that would work right.  Feel free to contact me if you know
@@ -138,90 +148,85 @@ First, for the purposes of this policy, some terminology:
   upgrades.  We could have chosen to keep a compatibility symlink, but
   that seemed likely to mask bugs in the debianized packages.
 
-5) Packages with only marginal emacs relevance
+5) Emacs add-on package support (examples below should make this much clearer)
 
-   Generally, if a normal package just contains some emacs helper
-   files, and does not need to perform any byte-compilation or other
-   emacs dependent activities upon installation (for performance or
-   other reasons), then it is not necessary to specify a dependency on
-   emacsen or any flavor of emacs, and the package may just include
-   files located in the standard emacs add-on directories.
+  A) Each package must include a file like this that indicates its
+     emacsen-common compatibility level:
 
-6) Emacs add-on package support (there are examples later which make
-   this much clearer)
+       /usr/lib/emacsen-common/packages/compat/<package>
 
-  A) Each package may place a file named the same as the package into
+     This file should contain a single integer, which at the moment
+     should be 0.  (Currently, the file is just used to distinguish
+     between old-style packages and new-style packages.)
+
+  B) Each package may place a file named the same as the package in
 
        /usr/lib/emacsen-common/packages/install/
        /usr/lib/emacsen-common/packages/remove/
 
-     and the package must call
+     and the package must make these calls from the given maintainer
+     scripts:
   
-       /usr/lib/emacsen-common/emacs-package-install foo
+     preinst:
+       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
+       then
+         /usr/lib/emacsen-common/emacs-package-install --preinst <package>
+       fi
 
-     in the postinst and 
+     postinst:
+       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
+       then
+         /usr/lib/emacsen-common/emacs-package-install --postinst <package>
+       fi
 
-       /usr/lib/emacsen-common/emacs-package-remove foo
+     prerm:
+       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
+       then
+         /usr/lib/emacsen-common/emacs-package-remove --prerm <package>
+       fi
 
-     in the prerm.
+     The postinst call must not be made until the package is
+     completely configured and otherwise ready for use, and the prerm
+     call must be made before any changes that would make the package
+     not completely configured and ready for use.
 
-     For now, "emacs-package-install foo" will effectively just result
-     in a call to
+     These calls will ensure that the add-on package's emacsen-common
+     install and remove scripts are called at the appropriate times.
+     In particular the postinst call will trigger the install script
+     for every flavor of emacs that's already completely installed.
+     If flavors are being installed simultaneously, the install script
+     may be delayed until that flavor's postinst runs.
 
-       /usr/lib/emacsen-common/packages/install/foo
+     When the install or remove script is called, the add-on package
+     can assume that the flavor for which it is being invoked is
+     completely installed (i.e. past the significant parts of its
+     postinst).
 
-     for the common package emacs, and for each installed flavor.
+     The install and remove scripts will be invoked with a single
+     argument, the <flavor> being installed or removed.
 
-     The arguments to these scripts will be the flavor being installed
-     (or just the common name "emacs") followed by a list of other
-     flavors already installed, potentially including the current one.
+     So if emacs23 and xemacs21 are fully installed, installing add-on
+     foo will result in calls to:
 
-     So if emacs23 and xemacs21 were installed, installing foo would
-     result in calls to:
-
-       /usr/lib/emacsen-common/packages/install/foo emacs emacs23 xemacs21
-       /usr/lib/emacsen-common/packages/install/foo emacs23 emacs23 xemacs21
-       /usr/lib/emacsen-common/packages/install/foo xemacs21 emacs23 xemacs21
+       /usr/lib/emacsen-common/packages/install/foo emacs23
+       /usr/lib/emacsen-common/packages/install/foo xemacs21
 
      emacs-package remove does the symmetric thing.
 
-  B) Each emacsen main package must have a call to
-     "/usr/lib/emacsen-common/emacs-install <flavor> in its postinst
-     and a call to "/usr/lib/emacsen-common/emacs-remove <flavor> in
-     its prerm.
+  C) Add-on packages need not declare a dependency on emacsen-common,
+     nor on any emacs flavors, but they must (of course) declare
+     dependencies on any other relevant packages, including relevant
+     add-on packages, or tools needed by the install/remove scripts.
 
-     The emacs-install script (for now) just executes
+     The emacsen-common infrastructure will ensure that the
+     install/remove script invocations are ordered to respect
+     inter-add-on package dependencies.
 
-       /usr/lib/emacsen-common/packages/install/<pkg> <flavor> <others>
-
-     for each installed <pkg>, but might do more later.  Similarly,
-     emacs-remove would just be equivalent to
-
-       /usr/lib/emacsen-common/packages/remove/<pkg> <flavor> <others>
-
-     for now.  Don't forget that the argument list to the add-on
-     package install scripts will indicate both the flavor being
-     installed, and the flavors already installed.  In this case,
-     since we're actually installing a flavor, the first argument
-     won't appear in the subsequent arguments.
-
-  C) Each add-on package has the right to place files into the
+  D) Each add-on package has the right to place files into the
      following directories:
 
        /etc/<emacs>/site-start.d
        /usr/share/<emacs>/site-lisp/<package-name>
-
-  D) Each add-on package must declare relevant dependencies on other
-     packages (including other add-on packages).  Note that add-on
-     packages should not depend on emacsen-common directly, but rather
-     on either the virtual package "emacsen" (see below), or some
-     appropriate combination of flavors (i.e. Depends: emacs23 |
-     emacs10).  In addition, any tools needed by the install/remove
-     scripts must be listed as package dependencies.  For example,
-     many add-on packages will probably use make in the install
-     script, so they need to add "Depends: make" to their control
-     file.  emacsen-common will make sure that the install/remove
-     scripts are ordered to respect inter-add-on package dependencies.
 
   E) If an add-on package compiles any of its Emacs Lisp sources
      (which must be compiled to a subdirectory of
@@ -236,25 +241,49 @@ First, for the purposes of this policy, some terminology:
      be able to locate the source code for the add-on package when
      using M-x find-function, etc.
 
-7) Mandatory binary symlink
+  F) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
+     depend on emacsen-common (>= 2.0.0).
+
+  G) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
+     make these calls from the given maintainer scripts:
+
+     preinst:
+       /usr/lib/emacsen-common/emacs-install --preinst <flavor>
+
+     postinst:
+       /usr/lib/emacsen-common/emacs-install --postinst <flavor>
+
+     prerm:
+       /usr/lib/emacsen-common/emacs-remove --prerm <flavor>
+
+     The postinst call must not be made until the package is
+     completely configured and ready for use, and the prerm call must
+     be made before any changes that would make the package not
+     completely configured and ready for use.
+
+     These calls will ensure that all of the relevant add-on packages'
+     emacsen-common install and remove scripts are called at the
+     appropriate times.  In particular the postinst call may trigger
+     the install scripts and the prerm script may trigger the remove
+     scripts for any package that is ready.  If add-on packages are
+     being installed simultaneously, the add-on install scripts may be
+     delayed until their postinst scripts are run.
+
+6) Mandatory binary symlink
 
    Each emacsen main package must have a symlink
    /usr/bin/<package-name> to /usr/bin/<emacs-binary> so that when
    add-on package install/remove scripts are called, they can just use
    /usr/bin/$ARGV[0] to get the right binary for byte-compilation.
 
-8) Virtual package
+7) Virtual package
 
-   Each emacsen main package will "Provides: emacsen".  It would be
-   nice to use "emacs", but for historical reasons, and given the
-   nature of the packaging system, we can't.
+   Each emacsen main package must "Provides: emacsen", and packages
+   that just need to make sure some flavor of emacs is installed
+   should "Depends: emacsen".  If they depend on specific flavors of
+   emacs, then they should list those dependencies explicitly instead.
 
-   Packages that just need to make sure some flavor of emacs is
-   installed should just "Depends: emacsen".  If they depend on
-   specific flavors of emacs, then they should list those dependencies
-   explicitly instead.
-
-9) Emacs lisp load path.
+8) Emacs lisp load path.
 
    At a minimum, each emacs must have the following directories in the
    given order in their load path:
@@ -277,7 +306,7 @@ First, for the purposes of this policy, some terminology:
    (fboundp 'debian-pkg-add-load-path-item) before calling this
    function, or add a dependency on emacsen-common (>= 1.4.14).
 
-10) Usage of autoload instead of load in the site-start.d files.
+9) Usage of autoload instead of load in the site-start.d files.
 
    It's been suggested, and is probably a good idea that maintainers
    switch to using autoload rather than load when possible in their
@@ -289,43 +318,34 @@ First, for the purposes of this policy, some terminology:
 
 
 
-That's it.  I think this gives the add-on package maintainers the
-flexibility they need to be able to DTRT, and I think the common case
-won't be all that difficult.
+That's it.  Hopefully this gives the add-on package maintainers the
+flexibility they need to be able to DTRT, and the common case won't be
+all that difficult.
 
-Examples (I've been told that there may be some bugs in these
-examples, but I haven't had time to check through them yet.  So don't
-take them as gospel at the moment.  I suggest that you loook at
-existing packages for examples of working code.  I will probably be
-revamping these soon, but I don't want to do it now since there are
-probably about to be some changes that will invalidate some of this):
+Examples:
 
 1) xemacs21 and the add-on packages tm and auctex are already installed,
    and now someone installs emacs23.
 
    In its prerm, emacs23 would make this call:
 
-     /usr/lib/emacsen-common/emacs-install emacs23
+     /usr/lib/emacsen-common/emacs-install --postinst emacs23
 
    which would result in calls to
 
-     /usr/lib/emacsen-common/packages/install/auctex emacs xemacs21
-     /usr/lib/emacsen-common/packages/install/auctex emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/emacs23/install/tm emacs xemacs21
-     /usr/lib/emacsen-common/packages/emacs/install/tm emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/install/auctex emacs23
+     /usr/lib/emacsen-common/packages/emacs/install/tm emacs23
     
 2) Now, given (1), assume that someone removes xemacs21.
 
    In its prerm, xemacs21 would make this call:
 
-     /usr/lib/emacsen-common/emacs-remove xemacs21
+     /usr/lib/emacsen-common/emacs-remove --prerm xemacs21
 
    which would result in calls to
 
-     /usr/lib/emacsen-common/packages/remove/auctex emacs emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/remove/auctex xemacs21 emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm emacs emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/auctex xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm xemacs21
 
 3) Now assume emacs23 and xemacs21 are installed, and that someone removes
    tm.
@@ -333,9 +353,8 @@ probably about to be some changes that will invalidate some of this):
    The call to emacsen-package-remove in tm's prerm will result in
    the following calls:
 
-     /usr/lib/emacsen-common/packages/remove/tm emacs emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm emacs23 emacs23 xemacs21
-     /usr/lib/emacsen-common/packages/remove/tm xemacs21 emacs23 xemacs21
+     /usr/lib/emacsen-common/packages/remove/tm emacs23
+     /usr/lib/emacsen-common/packages/remove/tm xemacs21
 
    In the remove/tm file, tm is responsible for cleaning up any files
    it put into its allowed locations:
@@ -343,7 +362,22 @@ probably about to be some changes that will invalidate some of this):
      /etc/<emacs>/site-start.d/
      /usr/share/<emacs>/site-lisp/tm
 
-4) Finally, please see sample-package-install-foo and
+4) Now assume that emacs23 and auctex are not installed, and that
+   someone installs both at the same time.
+
+   At some point during the installation, after emacs23 and auctex are
+   fully configured, this command will be invoked:
+
+     /usr/lib/emacsen-common/packages/remove/auctex emacs23
+
+   This call may happen from either emacs23 or auctex's postinst as a
+   result of their respective calls to emacs-install and
+   emacs-package-install.  Which package causes the invocation will
+   depend on the order in which dpkg decides to invoke their postint
+   scripts.  The emacsen-common infrastructure makes sure that the
+   last one wins.
+
+5) Finally, please see sample-package-install-foo and
    sample-package-remove-foo in /usr/share/doc/emacsen-common/.  These
    are sample install and remove scripts for a hypothetical package
    "foo" that only needs to byte compile a list of files for each

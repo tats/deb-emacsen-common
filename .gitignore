@@ -1,5 +1,6 @@
 *~
 .\#*
-/emacs-package-remove
-/emacs-remove
 \#*\#
+/debian/emacsen-common.debhelper.log
+/debian/emacsen-common.substvars
+/debian/emacsen-common/

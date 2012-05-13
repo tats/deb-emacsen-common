@@ -1,0 +1,9 @@
+compat/emacsen-common /usr/lib/emacsen-common/packages/compat
+site-start.el etc/emacs
+00debian-vars.el etc/emacs/site-start.d
+debian-startup.el usr/share/emacs/site-lisp
+emacs-install usr/lib/emacsen-common
+emacs-remove usr/lib/emacsen-common
+emacs-package-install usr/lib/emacsen-common
+emacs-package-remove usr/lib/emacsen-common
+lib.pl usr/lib/emacsen-common

@@ -1,3 +1,19 @@
+emacsen-common (2.0.0) unstable; urgency=low
+
+  * Remove the requirement that add-on packages depend on emacsen or
+    emacsen-common.  This should eliminate the need for many of the
+    trivial Debian foo-el packages, but before the dependencies can be
+    removed, an add-on package must be changed to follow the updated
+    debian-emacs-policy.
+
+  * Treat the failure of any add-on package install or remove script as a
+    fatal error.  Otherwise inter-add-on package dependencies won't be
+    respected.
+
+  * Migrate to debhelper.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 13 May 2012 16:38:30 -0500
+
 emacsen-common (1.4.23) unstable; urgency=low
 
   * Remove vestigal dependency on bsdmainutils.  Thanks to Sven Joachim

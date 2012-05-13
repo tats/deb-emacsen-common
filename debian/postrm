@@ -4,11 +4,7 @@ set -e
 
 if [ "$1" = purge ]
 then
-  if [ -e /var/lib/emacsen-common/installed-flavors ]
-  then
-    rm -f /var/lib/emacsen-common/installed-flavors
-    rmdir /var/lib/emacsen-common
-  fi
+  rm -rf /var/lib/emacsen-common
 fi
 
-exit 0
+#DEBHELPER#

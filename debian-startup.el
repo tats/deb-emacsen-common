@@ -1,6 +1,6 @@
 ;;; debian-startup.el --- Debian specific emacsen startup code.
 
-;; Copyright (C) 1998 Rob Browning
+;; Copyright (C) 1998-2012 Rob Browning
 
 ;; Maintainer: Rob Browning <rlb@defaultvalue.org>
 ;; Keywords: debian
@@ -62,8 +62,6 @@ load-path, returns the new load-path."
       (setq load-path (nreverse result))
       load-path)))
 
-;; Rewritten to less elegant -- non recursive version because elisp
-;; doesn't seem to handle tail recursion :<
 (defun debian-unique-strings (strings) 
   "Takes a list of strings and returns the list with *adjacent*
 duplicates removed."

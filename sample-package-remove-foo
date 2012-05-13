@@ -8,11 +8,10 @@ elc_dir=/usr/share/${FLAVOR}/site-lisp/foo
 
 echo remove/foo: Handling removal of emacsen flavor ${FLAVOR}
 
-if [ ${FLAVOR} != emacs ]
-then
-  echo emacsen-common: purging byte-compiled files for ${FLAVOR}
-  rm -f ${elc_dir}/*.elc
-  rm -f ${elc_dir}/*.el
-  rmdir --ignore-fail-on-non-empty ${elc_dir}
-fi
+echo emacsen-common: purging byte-compiled files for ${FLAVOR}
+rm -f ${elc_dir}/*.elc
+rm -f ${elc_dir}/*.el
+rm -f ${elc_dir}/Install.log*
+rmdir --ignore-fail-on-non-empty ${elc_dir}
+
 exit 0;

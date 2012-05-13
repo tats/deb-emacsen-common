@@ -7,25 +7,27 @@ FLAVOR=$1
 echo install/foo: Handling install of emacsen flavor ${FLAVOR}
 
 byte_compile_options="-batch -f batch-byte-compile"
-el_files="some-file.el some-other-file.el etc.el" 
-el_dir=/usr/share/emacs/site-lisp/foo/
 elc_dir=/usr/share/${FLAVOR}/site-lisp/foo/
 
-if [ ${FLAVOR} != emacs ]
-then
-  echo install/foo: byte-compiling for ${FLAVOR}
+echo install/foo: byte-compiling for ${FLAVOR}
 
-  [ -d ${elc_dir} ] || mkdir ${elc_dir}
+[ -d ${elc_dir} ] || mkdir ${elc_dir}
 
-  # Create symlinks to the .el files (see section 6E in debian-emacs polcy).
-  (cd ${elc_dir}
-    for el in ${el_files}
-    do
-      ln -s ../../emacs/site-lisp/foo/$el .
-    done)
+# Create symlinks to the .el files (see section 6E in debian-emacs
+# polcy).  This makes complation easy, and also allows find-function
+# and find-library to work properly.
+(cd ${elc_dir} && cp -s ../../../emacs/site-lisp/foo/*.el .)
 
-  # Byte compile them
-  (cd ${elc_dir}
-    ${FLAVOR} ${byte_compile_options} ${el_files} 2> /dev/null)
-fi
+# Byte compile them
+(cd ${elc_dir}
+ set +e
+ ${FLAVOR} ${byte_compile_options} *.el > Install.log 2>&1
+ if test $? -ne 0
+ then
+   cat Install.log
+   exit 1
+ fi
+ set -e
+ gzip -9v Install.log)
+
 exit 0;
