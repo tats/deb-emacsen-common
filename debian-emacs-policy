@@ -150,7 +150,8 @@ First, for the purposes of this policy, some terminology:
 
 5) Emacs add-on package support (examples below should make this much clearer)
 
-  A) Each package must include a file like this that indicates its
+  A) Each add-on package must add a "Conflicts: emacsen-common (<
+     2.0.0)" and include a file like this that indicates its
      emacsen-common compatibility level:
 
        /usr/lib/emacsen-common/packages/compat/<package>
@@ -159,7 +160,8 @@ First, for the purposes of this policy, some terminology:
      should be 0.  (Currently, the file is just used to distinguish
      between old-style packages and new-style packages.)
 
-  B) Each package may place a file named the same as the package in
+  B) Each add-on package may place a file named the same as the
+     package in
 
        /usr/lib/emacsen-common/packages/install/
        /usr/lib/emacsen-common/packages/remove/
