@@ -1,3 +1,14 @@
+emacsen-common (2.0.1) unstable; urgency=low
+
+  * Add debian-emacs-policy requirement that add-on packages conflict with
+    emacsen-common < 2.0.0.
+
+  * Put emacsen-commmon install/remove scripts in the correct location.
+    Thanks to Adam Borowski <kilobyte@angband.pl> and Ondřej Surý
+    <ondrej@debian.org> for the report. (Closes: #672874)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 14 May 2012 19:15:57 -0500
+
 emacsen-common (2.0.0) unstable; urgency=low
 
   * Remove the requirement that add-on packages depend on emacsen or
