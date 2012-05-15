@@ -26,8 +26,10 @@ override_dh_auto_install:
 	perl -wc lib.pl
 
 	rm -rf debian/emacsen-common
-	install -D emacsen-common.install $(pkg_ec_lib)/install/emacsen-common
-	install -D emacsen-common.remove $(pkg_ec_lib)/remove/emacsen-common
+	install -D emacsen-common.install \
+	  $(pkg_ec_lib)/packages/install/emacsen-common
+	install -D emacsen-common.remove \
+	  $(pkg_ec_lib)/packages/remove/emacsen-common
 	install -d $(pkg_ec_lib)/packages/compat
 	install -d $(pkg_ec_var)/state/flavor/installed
 	install -d $(pkg_ec_var)/state/package/installed
