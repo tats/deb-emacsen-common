@@ -5,8 +5,9 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-pkg_ec_lib := debian/emacsen-common/usr/lib/emacsen-common
-pkg_ec_var := debian/emacsen-common/var/lib/emacsen-common
+pkg_dir := debian/emacsen-common
+pkg_ec_lib := $(pkg_dir)/usr/lib/emacsen-common
+pkg_ec_var := $(pkg_dir)/var/lib/emacsen-common
 
 %:
 	dh $@
@@ -25,7 +26,7 @@ override_dh_auto_install:
 	perl -wc emacs-package-remove
 	perl -wc lib.pl
 
-	rm -rf debian/emacsen-common
+	rm -rf $(pkg_dir)
 	install -D emacsen-common.install \
 	  $(pkg_ec_lib)/packages/install/emacsen-common
 	install -D emacsen-common.remove \
@@ -33,4 +34,5 @@ override_dh_auto_install:
 	install -d $(pkg_ec_lib)/packages/compat
 	install -d $(pkg_ec_var)/state/flavor/installed
 	install -d $(pkg_ec_var)/state/package/installed
-	install -d -o root -g root debian/tmp/usr/local/share/emacs/site-lisp
+	install -d $(pkg_dir)/usr/local/share/emacs/site-lisp
+	find $(pkg_dir)/usr/local/share/emacs/site-lisp -ls

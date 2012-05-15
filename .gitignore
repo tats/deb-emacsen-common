@@ -1,6 +1,8 @@
 *~
 .\#*
-\#*\#
 /debian/emacsen-common.debhelper.log
+/debian/emacsen-common.postinst.debhelper
+/debian/emacsen-common.prerm.debhelper
 /debian/emacsen-common.substvars
 /debian/emacsen-common/
+\#*\#
