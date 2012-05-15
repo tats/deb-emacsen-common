@@ -1,3 +1,11 @@
+emacsen-common (2.0.2) unstable; urgency=low
+
+  * Install usr/local/emacs/site-lisp in the right place so debhelper will
+    handle it.  Thanks to Vincent Lefevre <vincent@vinc17.net> for the
+    report. (Closes: #672878)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 14 May 2012 19:40:05 -0500
+
 emacsen-common (2.0.1) unstable; urgency=low
 
   * Add debian-emacs-policy requirement that add-on packages conflict with
