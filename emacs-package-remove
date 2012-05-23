@@ -52,7 +52,11 @@ if(!$invoked_by_old_pkg)
   foreach my $flavor (@installed_flavors)
   {
     print "Remove $pkg for $flavor\n";
-    ex($script, $flavor) if -e $script;
+    if(-e $script && (system($script, $flavor) != 0))
+    {
+      print STDERR "ERROR: remove script from $pkg package failed\n";
+      exit(1);
+    }
   }
 }
 else # $invoked_by_old_pkg
@@ -63,6 +67,10 @@ else # $invoked_by_old_pkg
   foreach my $flavor (@installed_flavors)
   {
     print "Remove $pkg for $flavor\n";
-    ex($script, $flavor, @installed_flavors) if -e $script;
+    if(-e $script && (system($script, $flavor, @installed_flavors) != 0))
+    {
+      print STDERR "ERROR: remove script from $pkg package failed\n";
+      exit(1);
+    }
   }
 }
