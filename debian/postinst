@@ -12,6 +12,9 @@ then
   rm -f /var/lib/emacsen-common/installed-flavors
 fi
 
-/usr/lib/emacsen-common/emacs-package-install --postinst emacsen-common
+# Put debhelper section before emacs-package-install to avoid emacs
+# complaints about missing /usr/local/share/emacs/site-lisp.
 
 #DEBHELPER#
+
+/usr/lib/emacsen-common/emacs-package-install --postinst emacsen-common
