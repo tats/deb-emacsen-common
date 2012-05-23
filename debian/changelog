@@ -1,3 +1,14 @@
+emacsen-common (2.0.3) unstable; urgency=low
+
+  * Move #DEBHEPLER# up in the postinst to avoid an emacs complaint about
+    a missing /usr/local/emacs/site-lisp during the emacsen-common package
+    install script.
+
+  * Report something like "ERROR: install script from foo package failed"
+    to more clearly indicate the cause of an install/remove failure.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Tue, 22 May 2012 22:53:55 -0500
+
 emacsen-common (2.0.2) unstable; urgency=low
 
   * Install usr/local/emacs/site-lisp in the right place so debhelper will
