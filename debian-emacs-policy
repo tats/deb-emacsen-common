@@ -312,11 +312,9 @@ First, for the purposes of this policy, some terminology:
 
    It's been suggested, and is probably a good idea that maintainers
    switch to using autoload rather than load when possible in their
-   site-start.d files.
-
-   For example, instead of (load "some-package"), you should use
-   autoloads for all the top level, user visible functions.  Currently
-   the calc package has a good example of this.
+   site-start.d files.  For example, instead of (load "some-package"),
+   you should use autoloads for all the top level, user visible
+   functions.
 
 
 
