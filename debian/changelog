@@ -1,3 +1,19 @@
+emacsen-common (2.0.4) unstable; urgency=low
+
+  * Don't use the obsolete calc package as a policy example.
+    Thanks to "A. N. Other" <a.n.other.debian@gmail.com> for the report.
+    (closes: #674181)
+
+  * Don't override /usr/local/* load-path entries in debian-run-directories.
+    Previously, debian-run-directories would prepend all of the add-on
+    package paths to load-path, which meant that (in violation of Debian
+    policy) /usr/local wouldn't preceed the other entries.
+    Thanks to Hendrik Tews <hendrik@askra.de> for the report and Kevin
+    Ryde <user42@zip.com.au> for an initial suggested patch -- posted to
+    #454778. (closes: #676424)
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 02 Dec 2012 16:03:18 -0600
+
 emacsen-common (2.0.3) unstable; urgency=low
 
   * Move #DEBHEPLER# up in the postinst to avoid an emacs complaint about
