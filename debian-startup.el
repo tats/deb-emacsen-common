@@ -73,14 +73,14 @@ duplicates removed."
     (nreverse result)))
 
 (defun debian-run-directories (&rest dirs)
-
   "Load each file of the form XXfilename.el or XXfilename.elc in any
 of the dirs, where XX must be a number.  The files will be run in
 alphabetical order.  If a file appears in more than one of the dirs,
 then the earlier dir takes precedence, and a .elc file always
 supercedes a .el file of the same name."
 
-  (let* ((paths dirs)
+  (let* ((paths (mapcar 'copy-sequence dirs)) ; Ensure we have unique objects.
+
          ;; Get a list of all the files in all the specified
          ;; directories that match the pattern.
          (files
@@ -89,10 +89,9 @@ supercedes a .el file of the same name."
                   (lambda (dir) 
                     (directory-files dir nil "^[0-9][0-9].*\\.elc?$" t))
                   paths)))
-         
+
          ;; Now strip the directory portion, remove any .el or .elc
          ;; extension.
-         
          (stripped-names
           (mapcar (lambda (file) 
                     (if (string-match "\\.el$" file)
@@ -105,34 +104,22 @@ supercedes a .el file of the same name."
                    files)))
          
          ;; Finally sort them, and delete duplicates
-         (base-names (debian-unique-strings (sort stripped-names 'string<)))
-         
-         (old-load-path load-path))
+         (base-names (debian-unique-strings (sort stripped-names 'string<))))
 
-    ;; Set a new load path with the directories specified in the
-    ;; proper order, and first.
-    (let ((new-path (append paths load-path)))
-      (setq load-path new-path)
-      ;; Now load the files.  "load" will make sure we get the byte
-      ;; compiled one first, if any, and will respect load-path's
-      ;; ordering.
-      (mapc
-       (lambda (file)
-         (condition-case err
-             (load file nil)
-           (error (message "Error while loading %s: %s"
-                           file (error-message-string err)))))
-       base-names)
-      ;; restore the old load-path -- including any new paths added by
-      ;; files loaded in directory traversal.
-      (let ((add-on-package-paths 
-             (delq nil (mapcar
-                        (lambda (item)
-                          (if (not (member item new-path))
-                              item
-                            nil))
-                        load-path))))      
-        (setq load-path (append add-on-package-paths old-load-path))))))
+    (setq load-path (append paths load-path)) ; Prefix paths temporarily.
+    ;; Now load the files.  "load" will make sure we get the byte
+    ;; compiled one first, if any, and will respect load-path's
+    ;; ordering.
+    (mapc
+     (lambda (file)
+       (condition-case err
+           (load file nil)
+         (error (message "Error while loading %s: %s"
+                         file (error-message-string err)))))
+     base-names)
+    ;; Remove the paths we inserted, and only those paths.
+    (dolist (item paths)
+      (setq load-path (remq item load-path)))))
 
 (defun debian-startup (flavor)
 
