@@ -26,6 +26,12 @@ sub usage
   }
 }
 
+sub is_new_pkg
+{
+  my($pkg) = @_;
+  return (-e  "$lib_dir/packages/compat/$pkg");
+}
+
 if(scalar(@ARGV) == 1)
 {
   $invoked_by_old_pkg = 1;
@@ -64,11 +70,12 @@ if($context eq 'preinst')
 my @pkgs_to_handle = generate_add_on_install_list([$pkg]);
 my @installed_flavors = get_installed_flavors();
 
-if(!$invoked_by_old_pkg)
+foreach my $pkg (@pkgs_to_handle)
 {
-  foreach my $pkg (@pkgs_to_handle)
+  my $script = $lib_dir . "/packages/install/$pkg";
+
+  if(is_new_pkg($pkg))
   {
-    my $script = $lib_dir . "/packages/install/$pkg";
     foreach my $flavor (@installed_flavors)
     {
       print "Install $pkg for $flavor\n";
@@ -79,12 +86,8 @@ if(!$invoked_by_old_pkg)
       }
     }
   }
-}
-else # $invoked_by_old_pkg
-{
-  foreach my $pkg (@pkgs_to_handle)
+  else # old pkg
   {
-    my $script = $lib_dir . "/packages/install/$pkg";
     print "Install $pkg for emacs\n";
     ex($script, 'emacs', @installed_flavors) if -e $script;
 
