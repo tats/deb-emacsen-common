@@ -1,3 +1,11 @@
+emacsen-common (2.0.5~1.gbpf75004) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @f750043ddaac4af809a08312cb292869c1266a48 **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@trouble.defaultvalue.org>  Sun, 09 Dec 2012 12:19:05 -0600
+
 emacsen-common (2.0.4) unstable; urgency=low
 
   * Don't use the obsolete calc package as a policy example.
