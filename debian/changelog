@@ -1,10 +1,25 @@
-emacsen-common (2.0.5~1.gbpf75004) UNRELEASED; urgency=low
+emacsen-common (2.0.5) unstable; urgency=low
 
-  ** SNAPSHOT build @f750043ddaac4af809a08312cb292869c1266a48 **
+  * Don't ignore dependency install scripts in emacs-package-install.  The
+    previous code didn't actually update the script name properly in the
+    loop where it was trying to install all of an add-on package's
+    dependencies.  As a result, none of the dependencies' install scripts
+    were actually invoked. Thanks to Sébastien Villemot
+    <sebastien@debian.org> for tracking down the problem, and providing
+    the patch. (closes: #693472)
 
-  * UNRELEASED
+  * Invoke each add-on install script correctly as new-style or old-style.
+    Previously, emacs-package-install would invoke all of the add-on
+    install scripts in a dependency chain as either old-style or
+    new-style, based solely on whether or not the package that triggered
+    the install was old-style or new-style.  Now it should invoke each
+    package's install script based on whether the package itself is
+    new-style or old-style, as determined by the presence or absence of
+    the policy-required /usr/lib/emacsen-common/packages/compat/PACKAGE
+    file.  Thanks to Sébastien Villemot <sebastien@debian.org> for the
+    report.  (closes: #693472)
 
- -- Rob Browning <rlb@trouble.defaultvalue.org>  Sun, 09 Dec 2012 12:19:05 -0600
+ -- Rob Browning <rlb@defaultvalue.org>  Wed, 12 Dec 2012 20:15:05 -0600
 
 emacsen-common (2.0.4) unstable; urgency=low
 
