@@ -1,3 +1,11 @@
+emacsen-common (2.0.6~1.gbpff56db) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @ff56db25e1b08a063db78caca7fa1b31f4fdc0cd **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@trouble.defaultvalue.org>  Mon, 09 Dec 2013 13:39:33 -0600
+
 emacsen-common (2.0.5) unstable; urgency=low
 
   * Don't ignore dependency install scripts in emacs-package-install.  The
