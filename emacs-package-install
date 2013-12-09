@@ -40,15 +40,12 @@ if(scalar(@ARGV) == 1)
 }
 elsif (scalar(@ARGV) == 2)
 {
-  given($ARGV[0])
+  if($ARGV[0] eq '--preinst') { $context = 'preinst'; }
+  elsif($ARGV[0] eq '--postinst') { $context = 'postinst'; }
+  else
   {
-    when('--preinst') { $context = 'preinst'; }
-    when('--postinst') { $context = 'postinst'; }
-    default
-    {
-      usage(*STDERR{IO});
-      exit(1);
-    }
+    usage(*STDERR{IO});
+    exit(1);
   }
   $pkg = $ARGV[1];
 }
