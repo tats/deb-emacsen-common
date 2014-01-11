@@ -56,6 +56,11 @@ if($context eq 'preinst')
 
 # Must be --postinst.
 
+my @installed_flavors = get_installed_flavors();
+
+# Mark as safe to include in list of flavors for package setup.
+ex('touch', "$::installed_flavor_state_dir/$flavor");
+
 my @ordered_pkg_list =
     generate_add_on_install_list(get_installed_add_on_packages());
 
@@ -75,7 +80,6 @@ if(!$invoked_by_old_pkg)
 }
 else # $invoked_by_old_pkg
 {
-  my @installed_flavors = get_installed_flavors();
   foreach my $pkg (@ordered_pkg_list)
   {
     print "Install $pkg for $flavor\n";
@@ -88,5 +92,3 @@ else # $invoked_by_old_pkg
     ex('touch', "$::installed_package_state_dir/$pkg");
   }
 }
-
-ex('touch', "$::installed_flavor_state_dir/$flavor");
