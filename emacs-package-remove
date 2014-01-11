@@ -45,9 +45,6 @@ validate_add_on_pkg($pkg, 'emacs-package-remove', $invoked_by_old_pkg);
 # Silence "single use" warning.
 $::installed_package_state_dir = $::installed_package_state_dir;
 
-die "ERROR: cannot unlink $::installed_package_state_dir/$pkg: $!, "
-    unless (unlink("$::installed_package_state_dir/$pkg") or $!{ENOENT});
-
 my @installed_flavors = get_installed_flavors();
 my $script = $lib_dir . "/packages/remove/$pkg";
 
@@ -78,3 +75,6 @@ else # $invoked_by_old_pkg
     }
   }
 }
+
+die "ERROR: cannot unlink $::installed_package_state_dir/$pkg: $!, "
+    unless (unlink("$::installed_package_state_dir/$pkg") or $!{ENOENT});

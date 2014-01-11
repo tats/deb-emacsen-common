@@ -66,6 +66,9 @@ if($context eq 'preinst')
 
 # Must be --postinst.
 
+# Mark package as safe to attempt to setup.
+ex('touch', "$::installed_package_state_dir/$pkg");
+
 # Get all the packages $pkg depends on, dependency sorted.
 my @pkgs_to_handle = generate_add_on_install_list([$pkg]);
 my @installed_flavors = get_installed_flavors();
@@ -102,5 +105,3 @@ foreach my $pkg (@pkgs_to_handle)
     }
   }
 }
-
-ex('touch', "$::installed_package_state_dir/$pkg");
