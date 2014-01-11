@@ -54,23 +54,16 @@ sub validate_add_on_pkg
 sub get_installed_add_on_packages
 {
   # Return all of the old format packages, plus all of the new-format
-  # packages that have a state/installed file.  In this case installed
-  # means ready for compilation.
-
+  # packages that are ready (i.e. have a state/installed file).  In
+  # this case ready means ready for compilation.
   my $all_pkgs = glob_in_dir("$lib_dir/packages/install", '*[!~]');
   my $new_format_pkgs = glob_in_dir("$lib_dir/packages/compat", '*[!~]');
-  my %new_format_pkgs = map { $_ => 1 } @$new_format_pkgs;
-  my $new_format_pkgs_installed =
-      glob_in_dir($::installed_package_state_dir, '*[!~]');
-
-  # result = (all_pkgs - new_format_packages) + new_format_installed;
-
-  my @result = ();
-  for my $p (@$all_pkgs)
+  my %ready_pkgs = map { $_ => 1 } @$all_pkgs;
+  for my $p (@$new_format_pkgs)
   {
-    push @result, $p unless $new_format_pkgs{$p};
+    delete $ready_pkgs{$p} unless (-e "$::installed_package_state_dir/$p");
   }
-  push @result, @$new_format_pkgs_installed;
+  my @result = keys %ready_pkgs;
   return \@result;
 }
 
