@@ -77,6 +77,7 @@ sub get_package_status
 {
   my($pkg) = @_;
   my $status = `dpkg --status $pkg`;
+  die 'emacsen-common: dpkg invocation failed' if($? != 0);
   $status =~ s/\n\s+//gmo; # handle any continuation lines...
   return $status;
 }
