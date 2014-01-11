@@ -48,7 +48,6 @@ if(!$invoked_by_old_pkg)
   foreach my $pkg (@ordered_pkg_list)
   {
     print "Remove $pkg for $flavor\n";
-    unlink("$::installed_package_state_dir/$pkg");
     my $script = $lib_dir . "/packages/remove/$pkg";
     if(-e $script && (system($script, $flavor) != 0))
     {
@@ -63,7 +62,6 @@ else # $invoked_by_old_pkg
   foreach my $pkg (@ordered_pkg_list)
   {
     print "Remove $pkg for $flavor\n";
-    unlink("$::installed_package_state_dir/$pkg");
     my $script = $lib_dir . "/packages/remove/$pkg";
     if(-e $script && (system($script, $flavor, @installed_flavors) != 0))
     {

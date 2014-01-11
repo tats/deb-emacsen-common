@@ -77,7 +77,6 @@ if(!$invoked_by_old_pkg)
       print STDERR "ERROR: install script from $pkg package failed\n";
       exit(1);
     }
-    ex('touch', "$::installed_package_state_dir/$pkg");
   }
 }
 else # $invoked_by_old_pkg
@@ -91,6 +90,5 @@ else # $invoked_by_old_pkg
       print STDERR "ERROR: install script from $pkg package failed\n";
       exit(1);
     }
-    ex('touch', "$::installed_package_state_dir/$pkg");
   }
 }
