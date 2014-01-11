@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
+use Errno;
 use strict;
-use feature "switch";
 
 my $lib_dir = "/usr/lib/emacsen-common";
 my $invoked_by_old_pkg;
@@ -50,7 +50,9 @@ else
 
 if($context eq 'preinst')
 {
-  unlink("$::installed_flavor_state_dir/$flavor");
+  my $f = "$::installed_flavor_state_dir/$flavor";
+  unlink("$f");
+  die "ERROR: cannot unlink $f: $!, " unless (unlink($f) or $!{ENOENT});
   exit(0);
 }
 

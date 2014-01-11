@@ -1,5 +1,6 @@
 #!/usr/bin/perl -w
 
+use Errno;
 use strict;
 
 my $lib_dir = "/usr/lib/emacsen-common";
@@ -75,4 +76,5 @@ else # $invoked_by_old_pkg
 # Silence "single use" warning.
 $::installed_flavor_state_dir = $::installed_flavor_state_dir;
 
-unlink("$::installed_flavor_state_dir/$flavor");
+die "ERROR: cannot unlink $::installed_flavor_state_dir/$flavor: $!, "
+    unless (unlink("$::installed_flavor_state_dir/$flavor") or $!{ENOENT});
