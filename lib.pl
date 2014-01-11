@@ -30,6 +30,27 @@ sub glob_in_dir
   return \@files;
 }
 
+sub validate_add_on_pkg
+{
+  my ($pkg, $script, $old_invocation_style) = @_;
+  if($old_invocation_style)
+  {
+    if(-e "$lib_dir/packages/compat/$pkg")
+    {
+      print STDERR "ERROR: $pkg is broken - called $script as an old-style add-on, but has compat file.\n";
+      #exit(1);
+    }
+  }
+  else # New invocation style.
+  {
+    unless(-e "$lib_dir/packages/compat/$pkg")
+    {
+      print STDERR "ERROR: $pkg is broken - called $script as a new-style add-on, but has no compat file.\n";
+      #exit(1);
+    }
+  }
+}
+
 sub get_installed_add_on_packages
 {
   # Return all of the old format packages, plus all of the new-format

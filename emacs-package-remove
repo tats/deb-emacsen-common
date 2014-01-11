@@ -39,6 +39,8 @@ else
   exit(1);  
 }
 
+validate_add_on_pkg($pkg, 'emacs-package-remove', $invoked_by_old_pkg);
+
 # Silence "single use" warning.
 $::installed_package_state_dir = $::installed_package_state_dir;
 

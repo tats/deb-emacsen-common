@@ -55,6 +55,8 @@ else
   exit(1);
 }
 
+validate_add_on_pkg($pkg, 'emacs-package-install', $invoked_by_old_pkg);
+
 if($context eq 'preinst')
 {
   unlink("$::installed_package_state_dir/$pkg");
