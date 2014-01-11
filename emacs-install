@@ -66,29 +66,22 @@ ex('touch', "$::installed_flavor_state_dir/$flavor");
 my @ordered_pkg_list =
     generate_add_on_install_list(get_installed_add_on_packages());
 
-if(!$invoked_by_old_pkg)
+foreach my $pkg (@ordered_pkg_list)
 {
-  foreach my $pkg (@ordered_pkg_list)
+  print "Install $pkg for $flavor\n";
+  my $script = $lib_dir . "/packages/install/$pkg";
+  my $failed;
+  if(-e "$lib_dir/packages/compat/$pkg") # New-style package.
   {
-    print "Install $pkg for $flavor\n";
-    my $script = $lib_dir . "/packages/install/$pkg";
-    if(-e $script && (system($script, $flavor) != 0))
-    {
-      print STDERR "ERROR: install script from $pkg package failed\n";
-      exit(1);
-    }
+    $failed = -e $script && (system($script, $flavor) != 0);
   }
-}
-else # $invoked_by_old_pkg
-{
-  foreach my $pkg (@ordered_pkg_list)
+  else # Old-style package.
   {
-    print "Install $pkg for $flavor\n";
-    my $script = $lib_dir . "/packages/install/$pkg";
-    if(-e $script && (system($script, $flavor, @installed_flavors) != 0))
-    {
-      print STDERR "ERROR: install script from $pkg package failed\n";
-      exit(1);
-    }
+    $failed = -e $script && (system($script, $flavor, @installed_flavors) != 0);
+  }
+  if($failed)
+  {
+    print STDERR "ERROR: install script from $pkg package failed\n";
+    exit(1);
   }
 }
