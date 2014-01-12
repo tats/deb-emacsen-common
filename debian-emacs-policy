@@ -176,6 +176,8 @@ First, for the purposes of this policy, some terminology:
        fi
 
      postinst:
+       mkdir -p 0755 /var/lib/emacsen-common/state/package/installed
+       touch /var/lib/emacsen-common/state/package/installed/<package>
        if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
        then
          /usr/lib/emacsen-common/emacs-package-install --postinst <package>
@@ -186,6 +188,7 @@ First, for the purposes of this policy, some terminology:
        then
          /usr/lib/emacsen-common/emacs-package-remove --prerm <package>
        fi
+       rm -f /var/lib/emacsen-common/state/package/installed/<package>
 
      The postinst call must not be made until the package is
      completely configured and otherwise ready for use, and the prerm
