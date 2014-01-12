@@ -1,10 +1,60 @@
-emacsen-common (2.0.6~1.gbpff56db) UNRELEASED; urgency=low
+emacsen-common (2.0.6) unstable; urgency=low
 
-  ** SNAPSHOT build @ff56db25e1b08a063db78caca7fa1b31f4fdc0cd **
+  * Don't use given/when syntax in emacs-install and
+    emacs-package-install.  It's experimental and produces warnings with
+    Perl 5.18.  Thanks to Guillem Jover <guillem@debian.org> for the
+    report.  (Closes: 723157)
 
-  * UNRELEASED
+  * sample-package-remove-foo: don't fail if elc_dir is already gone.
+    Thanks to Kevin Ryde <user42@zip.com.au> for the suggestion.
+    (Closes: 711915)
 
- -- Rob Browning <rlb@trouble.defaultvalue.org>  Mon, 09 Dec 2013 13:39:33 -0600
+  * Complain loudly if an add-on package appears to be broken.  Add
+    validate_add_on_pkg() to verify that an add-on package's invocations
+    match its "style", and call it from emacs-package-install and
+    emacs-package-remove.
+
+  * Ensure there are no duplicates in get_installed_add_on_packages()
+    result.
+
+  * Check dpkg exit status when reading package status.
+
+  * emacs-install: mark emacsen flavor available before handling all the
+    add-ons.
+
+  * Check for unlink errors when handling emacsen flavor installed state
+    file.
+
+  * emacs-install/emacs-remove: stop messing with package installed state
+    files.  That was just wrong -- the installed state file only indicates
+    that a package is ready to go (i.e. it's safe to start calling the
+    install/remove scripts).  It has nothing to do with emacsen flavors.
+
+  * emacs-install/emacs-remove: treat each add-on as old/new case-by-case.
+    Whether or not an add-on package is old or new is a property of the
+    package itself.  The old or new status of the emacsen flavor is
+    irrelevant.
+
+  * Check for unlink errors when handling an add-on's installed state
+    file.
+
+  * Fix handling of add-on package installed state file.  Mark an add-on
+    package as ready (installed) sooner, and wait until after all of the
+    relevant removals before marking an add-on as unavailable.  Note that
+    the state file is only intended to indicate that the package is ready
+    for processing by emacsen-common.
+
+  * debian-emacs-policy: require add-on postinst/prerm to handle state
+    directly.  Add-on packages must now maintain their installed/<package>
+    file directly from their postinst/prerm scripts.  This should fix a
+    race whenever emacsen-common and an add-on package are being installed
+    at the same time (i.e. perhaps via "apt-get install add-on emacs24").
+    If the add-on's postinst goes first, its emacsen install script won't
+    be run.
+
+  * debian-emacs-policy: change conflicts requirement from "<" to "<<".
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 11 Jan 2014 20:22:23 -0600
 
 emacsen-common (2.0.5) unstable; urgency=low
 
