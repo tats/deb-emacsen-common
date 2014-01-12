@@ -150,7 +150,7 @@ First, for the purposes of this policy, some terminology:
 
 5) Emacs add-on package support (examples below should make this much clearer)
 
-  A) Each add-on package must add a "Conflicts: emacsen-common (<
+  A) Each add-on package must add a "Conflicts: emacsen-common (<<
      2.0.0)" and include a file like this that indicates its
      emacsen-common compatibility level:
 
