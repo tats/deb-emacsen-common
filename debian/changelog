@@ -1,10 +1,10 @@
-emacsen-common (2.0.7~1.gbpf43d53) UNRELEASED; urgency=medium
+emacsen-common (2.0.7) unstable; urgency=medium
 
-  ** SNAPSHOT build @f43d5378ecc02eff10ae5ed16e9e528e9bdb397c **
+  * Fix typo; add missing "-m" to mkdir call in postinst and policy.
+    Thanks to Stefan Lippers-Hollmann <s.L-H@gmx.de> for the report.
+    (Closes: 735155)
 
-  * UNRELEASED
-
- -- Rob Browning <rlb@defaultvalue.org>  Mon, 13 Jan 2014 10:57:01 -0600
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 13 Jan 2014 11:00:10 -0600
 
 emacsen-common (2.0.6) unstable; urgency=low
 
