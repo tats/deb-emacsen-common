@@ -1,3 +1,11 @@
+emacsen-common (2.0.7~1.gbpf43d53) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @f43d5378ecc02eff10ae5ed16e9e528e9bdb397c **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@defaultvalue.org>  Mon, 13 Jan 2014 10:57:01 -0600
+
 emacsen-common (2.0.6) unstable; urgency=low
 
   * Don't use given/when syntax in emacs-install and
