@@ -176,7 +176,7 @@ First, for the purposes of this policy, some terminology:
        fi
 
      postinst:
-       mkdir -p 0755 /var/lib/emacsen-common/state/package/installed
+       mkdir -p -m 0755 /var/lib/emacsen-common/state/package/installed
        touch /var/lib/emacsen-common/state/package/installed/<package>
        if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
        then

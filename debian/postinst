@@ -17,6 +17,6 @@ fi
 
 #DEBHELPER#
 
-mkdir -p 0755 /var/lib/emacsen-common/state/package/installed
+mkdir -p -m 0755 /var/lib/emacsen-common/state/package/installed
 touch /var/lib/emacsen-common/state/package/installed/emacsen-common
 /usr/lib/emacsen-common/emacs-package-install --postinst emacsen-common
