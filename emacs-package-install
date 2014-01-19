@@ -55,8 +55,6 @@ else
   exit(1);
 }
 
-validate_add_on_pkg($pkg, 'emacs-package-install', $invoked_by_old_pkg);
-
 if($context eq 'preinst')
 {
   die "ERROR: cannot unlink $::installed_package_state_dir/$pkg: $!, "
@@ -65,6 +63,8 @@ if($context eq 'preinst')
 }
 
 # Must be --postinst.
+
+validate_add_on_pkg($pkg, 'emacs-package-install', $invoked_by_old_pkg);
 
 # Mark package as safe to attempt to setup.
 ex('touch', "$::installed_package_state_dir/$pkg");
