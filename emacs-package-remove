@@ -5,7 +5,6 @@ use strict;
 
 my $lib_dir = "/usr/lib/emacsen-common";
 my $invoked_by_old_pkg;
-my $context;
 my $pkg;
 
 require $lib_dir . "/lib.pl";
