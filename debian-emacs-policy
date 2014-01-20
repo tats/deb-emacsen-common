@@ -39,8 +39,10 @@ First, for the purposes of this policy, some terminology:
      fi
 
    Of course this requirement does not apply for the maintainer
-   scripts of any package that depends on emacsen-common (i.e. for
-   each emacsen main <flavor> package: emacs23, etc.).
+   scripts of any package that depends on emacsen-common, which
+   includes all add-on packages and all emacsen main <flavor>
+   packages: emacs23, emacs24, etc.  So in practice, this guard should
+   rarely be necessary.
 
 2) Flavor indication
 
@@ -150,8 +152,8 @@ First, for the purposes of this policy, some terminology:
 
 5) Emacs add-on package support (examples below should make this much clearer)
 
-  A) Each add-on package must add a "Conflicts: emacsen-common (<<
-     2.0.0)" and include a file like this that indicates its
+  A) Each add-on package must add a "Depends: emacsen-common (>=
+     2.0.8)" and include a file like this that indicates its
      emacsen-common compatibility level:
 
        /usr/lib/emacsen-common/packages/compat/<package>
@@ -170,25 +172,13 @@ First, for the purposes of this policy, some terminology:
      scripts:
   
      preinst:
-       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
-       then
-         /usr/lib/emacsen-common/emacs-package-install --preinst <package>
-       fi
+       /usr/lib/emacsen-common/emacs-package-install --preinst <package>
 
      postinst:
-       mkdir -p -m 0755 /var/lib/emacsen-common/state/package/installed
-       touch /var/lib/emacsen-common/state/package/installed/<package>
-       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
-       then
-         /usr/lib/emacsen-common/emacs-package-install --postinst <package>
-       fi
+       /usr/lib/emacsen-common/emacs-package-install --postinst <package>
 
      prerm:
-       if test -e /var/lib/emacsen-common/state/package/installed/emacsen-common
-       then
-         /usr/lib/emacsen-common/emacs-package-remove --prerm <package>
-       fi
-       rm -f /var/lib/emacsen-common/state/package/installed/<package>
+       /usr/lib/emacsen-common/emacs-package-remove --prerm <package>
 
      The postinst call must not be made until the package is
      completely configured and otherwise ready for use, and the prerm
@@ -218,10 +208,11 @@ First, for the purposes of this policy, some terminology:
 
      emacs-package remove does the symmetric thing.
 
-  C) Add-on packages need not declare a dependency on emacsen-common,
-     nor on any emacs flavors, but they must (of course) declare
-     dependencies on any other relevant packages, including relevant
-     add-on packages, or tools needed by the install/remove scripts.
+  C) Add-on packages need not declare a dependency on any emacs
+     flavors, but they must declare a dependency on emacsen-common
+     (see above, and (of course) must declare dependencies on any
+     other relevant packages, including relevant add-on packages, or
+     tools needed by the install/remove scripts.
 
      The emacsen-common infrastructure will ensure that the
      install/remove script invocations are ordered to respect
@@ -247,7 +238,7 @@ First, for the purposes of this policy, some terminology:
      using M-x find-function, etc.
 
   F) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
-     depend on emacsen-common (>= 2.0.0).
+     depend on emacsen-common (>= 2.0.8).
 
   G) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
      make these calls from the given maintainer scripts:

@@ -3,6 +3,5 @@
 set -e
 
 /usr/lib/emacsen-common/emacs-package-remove --prerm emacsen-common
-rm -f /var/lib/emacsen-common/state/package/installed/emacsen-common
 
 #DEBHELPER#
