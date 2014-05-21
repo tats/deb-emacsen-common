@@ -1,10 +1,36 @@
-emacsen-common (2.0.8~1.gbpaa45d0) UNRELEASED; urgency=medium
+emacsen-common (2.0.8) unstable; urgency=medium
 
-  ** SNAPSHOT build @aa45d099481e4edf3cb8811ff8c00809725582ad **
+  * Require add-on packages to depend on emacsen-common >= 2.0.8.  This
+    should be simpler and safer, and emacsen-common is only ~140k, which
+    shouldn't be too big a burden.
 
-  * UNRELEASED
+    One specific problem this solves is the handling of
+    /var/lib/emacsen-common when emacsen-common is purged -- in particular
+    /var/lib/emacsen-common/state/package/installed/*.  Without the
+    dependency, emacsen-common can't remove the tree without clobbering
+    the state for every add-on, but if emacsen-common can't remove it, who
+    can?
 
- -- Rob Browning <rlb@trouble.defaultvalue.org>  Sun, 19 Jan 2014 14:46:08 -0600
+    This release changes the following requirements for add-on packages
+    (see debian-emacs-policy for the details):
+
+      - They must now depend on emacsen-common >= 2.0.8.
+      - They don't need to conflict with emacsen-common anymore.
+      - They don't need to guard their calls to emacs-install-package.
+      - They don't need to guard their calls to emacs-remove-package.
+      - They should no longer manage their package/installed/ file directly.
+
+    In addition emacsen flavor packages should now depend on
+    emacsen-common >= 2.0.8.
+
+  * emacs-package-install: don't try to validate the package during the preinst.
+    The package files that we're looking for won't be available.
+    Thanks to Tatsuya Kinoshita <tats@vega.ocn.ne.jp> for the report.
+    (Closes: 736062)
+
+  * emacs-package-remove: remove unused context variable.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Wed, 21 May 2014 15:19:38 -0500
 
 emacsen-common (2.0.7) unstable; urgency=medium
 
