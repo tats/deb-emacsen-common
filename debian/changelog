@@ -1,3 +1,11 @@
+emacsen-common (3.0.0~1.gbpae2fd7) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @ae2fd7be00b9914f8cbaa2398f795bd660650d1c **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@defaultvalue.org>  Tue, 08 Aug 2017 16:03:08 -0500
+
 emacsen-common (2.0.8) unstable; urgency=medium
 
   * Require add-on packages to depend on emacsen-common >= 2.0.8.  This
