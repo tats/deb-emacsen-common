@@ -3,18 +3,16 @@
 # [ Sample only -- this script hasn't been tested, so be careful. ]
 set -e
 
-FLAVOR=$1
-elc_dir=/usr/share/${FLAVOR}/site-lisp/foo
+flavor="$1"
+elc_dir="/usr/share/$flavor/site-lisp/foo"
 
-echo remove/foo: Handling removal of emacsen flavor ${FLAVOR}
+echo "remove/foo: Handling removal of emacsen flavor $flavor"
 
-echo emacsen-common: purging byte-compiled files for ${FLAVOR}
-rm -f ${elc_dir}/*.elc
-rm -f ${elc_dir}/*.el
-rm -f ${elc_dir}/Install.log*
-if test -e "${elc_dir}"
+(cd "$elc_dir" && rm -f *.elc *.el install.log install.log.gz)
+
+if test -e "$elc_dir"
 then
-  rmdir --ignore-fail-on-non-empty "${elc_dir}"
+    rmdir --ignore-fail-on-non-empty "$elc_dir"
 fi
 
-exit 0;
+exit 0
