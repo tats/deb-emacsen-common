@@ -4,18 +4,8 @@ First, for the purposes of this policy, some terminology:
 
   <flavor> - a particular flavor of Emacs, for example:
 
-    xemacs20
-    xemacs21
-    emacs22
-    emacs23
-
-  <emacs> - either a <flavor> or the generic value "emacs", i.e.:
-
     emacs
-    xemacs20
     xemacs21
-    emacs22
-    emacs23
 
   add-on package - any package which wishes to use the emacsen-common
     infrastructure, usually in order to byte-compile itself for some
@@ -41,61 +31,37 @@ First, for the purposes of this policy, some terminology:
    Of course this requirement does not apply for the maintainer
    scripts of any package that depends on emacsen-common, which
    includes all add-on packages and all emacsen main <flavor>
-   packages: emacs23, emacs24, etc.  So in practice, this guard should
-   rarely be necessary.
+   packages: emacs-lucid, xemacs21, etc.  So in practice, this guard
+   should rarely be necessary.
 
 2) Flavor indication
 
-   Each emacs binary must set the variable debian-emacs-flavor to be
+   Each flavor's binary must set the variable debian-emacs-flavor to be
    the same as the name of the debian-package.  For example, the
-   emacs23 package does this in startup.el:
+   emacs-lucid package does this in startup.el:
 
-     (defconst debian-emacs-flavor 'emacs23
+     (defconst debian-emacs-flavor 'emacs
        "A symbol representing the particular debian flavor of emacs running.
-     Something like 'emacs20, 'xemacs20, etc.")
+     Something like 'emacs, 'xemacs21, etc.")
 
    For now, debian-emacs-flavor should be defined regardless of the
    use of -q or --no-site-file.
 
-   [ NOTE: We may eventually consider moving debian-emacs-flavor to
-     emacsen-common and have emacsen-common set it based on the
-     argument to debian-startup.  That would minimize changes to
-     startup.el, but it was attempted briefly in the past, too close
-     to a freeze, and caused enough trouble that we backed off.]
-
 3) Emacs startup strategy
 
-  We have the following startup files/directories:
+  On startup each emacsen must call (debian-startup <flavor>).  During
+  debian-startup, the relevant flavor-specific site-start.d files will
+  be loaded via debian-run-directories, e.g:
 
-  emacsen-common: /etc/emacs/site-start.{el,d}
-  xemacs20:       /etc/xemacs20/site-start.d
-  xemacs21:       /etc/xemacs21/site-start.d
-  emacs22:        /etc/emacs22/site-start.d
-  emacs23:        /etc/emacs23/site-start.d
+    emacs:        /etc/emacs/site-start.d
+    xemacs21:     /etc/xemacs21/site-start.d
 
-  /etc/emacs/site-start.el is a conffile, and is owned by
-  emacsen-common.  This file should not be modified by *any* add-on
-  packages, or by any emacsen package maintainer.  It is solely for
-  the use of the local admin.  It should be empty unless the local
-  admin modifies it.
-
-  The load-path for a given emacs flavor must include /etc/<flavor>
-  and /etc/emacs in that order (see section 8 below), and on startup
-  each emacsen must call (debian-startup <flavor>) and then load
-  "site-start".  This means that /etc/emacs/site-start.el will be
-  loaded if it exists, unless there's an
-  /etc/<flavor>/site-start.el{,c} or /etc/emacs/site-start.elc which
-  will take precedence.  These site-start.el files are also the sole
-  domain of the local system admin, and should be empty unless
-  modified by the local admin.
-
-  Given that the site-startup.el files are "off-limits" to the emacsen
-  maintainers, the next question is, "Where should we run
-  debian-startup?"  The safest possibility, and the one I had
-  originally intended was to modify lisp/startup.el to do the right
-  thing, and I had also intended that --no-site-file would disable all
-  of the Debian startup bits, including calling Debian startup.  So
-  here's what emacs23 has in startup.el:
+  The next question is, "Where should we run debian-startup?"  The
+  safest possibility, and the one I had originally intended was to
+  modify lisp/startup.el to do the right thing, and I had also
+  intended that --no-site-file would disable all of the Debian startup
+  bits, including calling Debian startup.  So here's what emacs-lucid
+  has in startup.el:
 
     ;; Debian startup
      (if site-run-file
@@ -108,47 +74,24 @@ First, for the purposes of this policy, some terminology:
           (load site-run-file t t nil)))
 
   This makes sure that Debian's bits are setup as early as possible,
-  and requires only minor modifications to the emacs source.  An
-  alternate possibility might be to use lisp/site-init.el, but I'm not
-  sure that would work right.  Feel free to contact me if you know
-  better.
+  and requires only minor modifications to the emacs source.
 
-  debian-startup, among other things, calls debian-run-directories.
-  debian-run-directories collects the union of all the file base names
-  (i.e. without any .el or .elc extension, and without the directory
-  component: i.e. /etc/xemacs/site-start.d/50foo.elc => 50foo), then
+  At a minimum debian-startup calls debian-run-directories which
+  collects the union of all the file base names (i.e. without any .el
+  or .elc extension, and without the directory component:
+  i.e. /etc/xemacs21/site-start.d/50foo.elc => 50foo), then
   temporarily augments the emacs load path to include
-  /etc/<flavor>/site-start.d and /etc/emacs/site-start.d in that
-  order, and then calls (load base-name) in alphabetical order.
+  /etc/<flavor>/site-start.d, and calls (load base-name) in
+  string< order.
 
-  This result is that .elc files will take precedence over .el files
-  in a given directory, and files in the <flavor> site-start.d
-  directory will take precedence over those in the emacs common
-  directory.
+4) /usr/share/<flavor>/site-lisp/
 
-4) Code locations
+  This directory must be treated as part of the normal emacsen load
+  path, and add-on packages should place their files there (see
+  below), e.g.:
 
-  In addition to the /etc/<emacs>/site-start* directories, we have the
-  following directories (their use will be described shortly):
-
-  emacsen-common: /usr/share/emacs/site-lisp/
-  xemacs20:       /usr/share/xemacs20/site-lisp/
-  xemacs21:       /usr/share/xemacs21/site-lisp/
-  emacs22:        /usr/share/emacs22/site-lisp/
-  emacs23:        /usr/share/emacs23/site-lisp/
-
-  These are treated as part of the normal emacsen load path with the
-  <flavor> dir taking precedence over the emacs (common) dir.
-
-  /usr/share/<flavor>/site-lisp should be used instead of the normal
-  site-lisp directory for that flavor of emacs, and the package for a
-  given flavor of emacs should not have the normal site-lisp
-  directory.  For example, instead of the emacs23 package having
-  /usr/share/emacs/23.2/site-lisp, it should only have
-  /usr/share/emacs23/site-lisp.  This is important because it allows
-  us to avoid having dangling directories for old versions across
-  upgrades.  We could have chosen to keep a compatibility symlink, but
-  that seemed likely to mask bugs in the debianized packages.
+    emacs:     /usr/share/emacs/site-lisp/
+    xemacs21:  /usr/share/xemacs21/site-lisp/
 
 5) Emacs add-on package support (examples below should make this much clearer)
 
@@ -200,10 +143,10 @@ First, for the purposes of this policy, some terminology:
      The install and remove scripts will be invoked with a single
      argument, the <flavor> being installed or removed.
 
-     So if emacs23 and xemacs21 are fully installed, installing add-on
-     foo will result in calls to:
+     So if emacs and xemacs21 flavors are fully installed, installing
+     add-on foo will result in calls to:
 
-       /usr/lib/emacsen-common/packages/install/foo emacs23
+       /usr/lib/emacsen-common/packages/install/foo emacs
        /usr/lib/emacsen-common/packages/install/foo xemacs21
 
      emacs-package remove does the symmetric thing.
@@ -221,27 +164,28 @@ First, for the purposes of this policy, some terminology:
   D) Each add-on package has the right to place files into the
      following directories:
 
-       /etc/<emacs>/site-start.d
-       /usr/share/<emacs>/site-lisp/<package-name>
+       /etc/<flavor>/site-start.d
+       /usr/share/<flavor>/site-lisp/<package-name>
 
   E) If an add-on package compiles any of its Emacs Lisp sources
      (which must be compiled to a subdirectory of
      /usr/share/<flavor>/site-lisp/<package-name> -- see section 4
-     above) it must also create a symlink in the same directory as the
-     compiled output that points to the corresponding source file.
+     above), the corresponding .el file must be available in the same
+     directory as the corresponding .elc file, either directly, via
+     symlink, or hardlink.
 
      For example, if add-on package foo produces
-     /usr/share/emacs23/site-lisp/foo/bar.elc, then it must also
-     create a symlink /usr/share/emacs23/site-lisp/foo/bar.el pointing
-     to the corresponding source file.  This ensures that Emacs will
-     be able to locate the source code for the add-on package when
-     using M-x find-function, etc.
+     /usr/share/emacs/site-lisp/foo/bar.elc, then
+     /usr/share/emacs/site-lisp/foo/bar.el must refer to the
+     corresponding source file.  This ensures that Emacs will be able
+     to locate the source code for the add-on package when using M-x
+     find-function, etc.
 
-  F) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
-     depend on emacsen-common (>= 2.0.8).
+  F) Each emacsen main package (i.e. emacs-lucid, xemacs21, etc.) must
+     depend on emacsen-common (>= 3.0.0).
 
-  G) Each emacsen main package (i.e. emacs23, emacs23-nox, etc.) must
-     make these calls from the given maintainer scripts:
+  G) Each emacsen main package (i.e. emacs-lucid, emacs-nox, etc.)
+     must make these calls from the given maintainer scripts:
 
      preinst:
        /usr/lib/emacsen-common/emacs-install --preinst <flavor>
@@ -265,12 +209,12 @@ First, for the purposes of this policy, some terminology:
      being installed simultaneously, the add-on install scripts may be
      delayed until their postinst scripts are run.
 
-6) Mandatory binary symlink
+6) Mandatory binary path
 
-   Each emacsen main package must have a symlink
-   /usr/bin/<package-name> to /usr/bin/<emacs-binary> so that when
-   add-on package install/remove scripts are called, they can just use
-   /usr/bin/$ARGV[0] to get the right binary for byte-compilation.
+   Each emacsen must be available as /usr/bin/<flavor> in addition to
+   any normal binary path so that when add-on package install/remove
+   scripts are called, they can just use /usr/bin/"$1" to get the
+   right binary for byte-compilation.
 
 7) Virtual package
 
@@ -281,26 +225,17 @@ First, for the purposes of this policy, some terminology:
 
 8) Emacs lisp load path.
 
-   At a minimum, each emacs must have the following directories in the
-   given order in their load path:
+   At a minimum, each emacs must have the following directories in this
+   relative order in their load path:
 
-     /etc/<flavor>
-     /etc/emacs
-     /usr/local/share/emacs/<upstream>/site-lisp
-     /usr/local/share/emacs/site-lisp
-     /usr/share/emacs/<flavor>/site-lisp
-     /usr/share/emacs/site-lisp
-
-   where <upstream> is the normal emacs upstream version number for
-   the relevant flavor like 20.2 or 23.2.
+     /usr/local/share/<flavor>/site-lisp
+     /usr/share/<flavor>/site-lisp
 
    Emacs add-on packages may not modify load-path directly.  They must
    use (debian-pkg-add-load-path-item <path>).  This function will
    make sure that their additions end up in the right place -- before
    the emacs system directories, but after the /usr/local/
-   directories.  Also, add-on packages will need to either check
-   (fboundp 'debian-pkg-add-load-path-item) before calling this
-   function, or add a dependency on emacsen-common (>= 1.4.14).
+   directories.
 
 9) Usage of autoload instead of load in the site-start.d files.
 
@@ -353,18 +288,18 @@ Examples:
    In the remove/tm file, tm is responsible for cleaning up any files
    it put into its allowed locations:
 
-     /etc/<emacs>/site-start.d/
-     /usr/share/<emacs>/site-lisp/tm
+     /etc/<flavor>/site-start.d/
+     /usr/share/<flavor>/site-lisp/tm
 
-4) Now assume that emacs23 and auctex are not installed, and that
+4) Now assume that emacs and auctex are not installed, and that
    someone installs both at the same time.
 
-   At some point during the installation, after emacs23 and auctex are
+   At some point during the installation, after emacs and auctex are
    fully configured, this command will be invoked:
 
-     /usr/lib/emacsen-common/packages/remove/auctex emacs23
+     /usr/lib/emacsen-common/packages/remove/auctex emacs
 
-   This call may happen from either emacs23 or auctex's postinst as a
+   This call may happen from either emacs or auctex's postinst as a
    result of their respective calls to emacs-install and
    emacs-package-install.  Which package causes the invocation will
    depend on the order in which dpkg decides to invoke their postint
