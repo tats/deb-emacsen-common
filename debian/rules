@@ -34,5 +34,3 @@ override_dh_auto_install:
 	install -d $(pkg_ec_lib)/packages/compat
 	install -d $(pkg_ec_var)/state/flavor/installed
 	install -d $(pkg_ec_var)/state/package/installed
-	install -d $(pkg_dir)/usr/local/share/emacs/site-lisp
-	find $(pkg_dir)/usr/local/share/emacs/site-lisp -ls
