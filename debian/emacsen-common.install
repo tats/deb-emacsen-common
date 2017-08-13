@@ -1,6 +1,6 @@
 compat/emacsen-common /usr/lib/emacsen-common/packages/compat
 site-start.el etc/emacs
-debian-startup.el usr/share/emacs/site-lisp
+debian-startup.el usr/share/emacsen-common
 emacs-install usr/lib/emacsen-common
 emacs-remove usr/lib/emacsen-common
 emacs-package-install usr/lib/emacsen-common
