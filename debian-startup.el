@@ -1,6 +1,6 @@
 ;;; debian-startup.el --- Debian specific emacsen startup code.
 
-;; Copyright (C) 1998-2012 Rob Browning
+;; Copyright (C) 1998-2017 Rob Browning
 
 ;; Maintainer: Rob Browning <rlb@defaultvalue.org>
 ;; Keywords: debian
@@ -122,6 +122,4 @@ supercedes a .el file of the same name."
       (setq load-path (remq item load-path)))))
 
 (defun debian-startup (flavor)
-  (let ((common-dir "/etc/emacs/site-start.d")
-        (flavor-dir (concat "/etc/" (symbol-name flavor) "/site-start.d")))
-    (debian-run-directories flavor-dir common-dir)))
+  (debian-run-directories (format "/etc/%s/site-start.d" (symbol-name flavor))))
