@@ -122,24 +122,6 @@ supercedes a .el file of the same name."
       (setq load-path (remq item load-path)))))
 
 (defun debian-startup (flavor)
-
-  ;; Our handling of debian-emacs-flavor here is truly weird, but we
-  ;; have to do it like this because some of the emacsen flavors
-  ;; didn't DWIM in their startup sequence.  I wasn't as clear as I
-  ;; should have been in debian-policy, but they were also
-  ;; technically violating policy.
-
-  ;; It's even weirder now.  I've changed policy back to the old way,
-  ;; but I'm also doing some sanity checking here and making sure that
-  ;; even debian-emacs-flavor gets set no matter what.  I'm in a rush
-  ;; right now, but I'll come back later and make all this cleaner and
-  ;; better documented.  Sorry.
-
-  (unless (boundp 'debian-emacs-flavor)
-    (defconst debian-emacs-flavor flavor
-      "A symbol representing the particular debian flavor of emacs that's
-running.  Something like 'emacs20, 'xemacs20, etc."))
-
   (let ((common-dir "/etc/emacs/site-start.d")
         (flavor-dir (concat "/etc/" (symbol-name flavor) "/site-start.d")))
     (debian-run-directories flavor-dir common-dir)))
