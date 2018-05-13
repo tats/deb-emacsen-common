@@ -1,7 +1,7 @@
 Source: emacsen-common
 Section: editors
 Priority: optional
-Build-Depends: debhelper (>= 8)
+Build-Depends: debhelper (>= 10)
 Maintainer: Rob Browning <rlb@defaultvalue.org>
 Standards-Version: 3.6.2
 
