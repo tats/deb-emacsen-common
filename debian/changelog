@@ -1,10 +1,39 @@
-emacsen-common (3.0.0~1.gbpae2fd7) UNRELEASED; urgency=medium
+emacsen-common (3.0.0) experimental; urgency=medium
 
-  ** SNAPSHOT build @ae2fd7be00b9914f8cbaa2398f795bd660650d1c **
+  * Accommodate the unversioning of the Emacs packages, i.e. emacs25 is
+    becoming emacs.
 
-  * UNRELEASED
+  * Improve sample packaging scripts (quoting, etc.).
 
- -- Rob Browning <rlb@defaultvalue.org>  Tue, 08 Aug 2017 16:03:08 -0500
+  * Remove 00debian-vars.el.  Rely on flavors to set the mail-host-address
+    and gnus-nntpserver-file values themselves, when appropriate.
+
+  * Adjust policy to reflect dissolution of shared emacs metaflavor.
+    There will no longer be a shared emacs metaflavor -- the emacs25
+    package is planning to "unversion" to become the concrete emacs
+    flavor.
+
+  * Update debian/compat to 10.
+
+  * Conflict with older emacsen flavors.  Given the dissolution of the
+    emacs metaflavor and the unversioning of the emacs25 package, conflict
+    with the core package in all previous emacsen flavors so that we can
+    manage the transition without having to carry around a lot of
+    duplicated compatibility code here, and/or in the various flavors.
+
+  * Clean up emacsen-common install and remove.
+
+  * Move debian-startup.el to share/emacsen-common.
+
+  * Drop /etc/emacs/site-start.el.
+
+  * Remove vestigial debian-emacs-flavor handling.
+
+  * Don't run emacs/site-start.d anymore.
+
+  * Drop /usr/local/emacs/site-lisp.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 19 May 2018 14:03:17 -0500
 
 emacsen-common (2.0.8) unstable; urgency=medium
 
