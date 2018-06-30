@@ -1,10 +1,13 @@
-emacsen-common (3.0.1~1.gbpf45a48) UNRELEASED; urgency=medium
+emacsen-common (3.0.1) experimental; urgency=medium
 
-  ** SNAPSHOT build @f45a48c5b6828bd9da2fe3715b61c489090d6db9 **
+  * Conflict with xemacs21 entirely until it's ready for 3.0.  Thanks to
+    David Bremner for reporting the problem. (Closes: 902208)
 
-  * UNRELEASED
+  * emacsen-common.maintstripts: update rm_conffile versions.  Apparently
+    this wasn't right the first time around.  Thanks to Sean Whitton for
+    reporting the problem and providing the fix. (Closes: 901450)
 
- -- Rob Browning <rlb@defaultvalue.org>  Sun, 17 Jun 2018 10:36:43 -0500
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 30 Jun 2018 13:23:49 -0500
 
 emacsen-common (3.0.0) experimental; urgency=medium
 
