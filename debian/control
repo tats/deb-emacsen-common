@@ -15,7 +15,7 @@ Conflicts:
   emacs23-common,
   emacs24-common,
   emacs25-common,
-  xemacs21-support (<< 21.4.24-5)
+  xemacs21-support
 Description: Common facilities for all emacsen
  This package contains code that is needed by all the (x)emacs
  packages.  It will be automatically installed when needed.
