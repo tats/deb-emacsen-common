@@ -1,3 +1,9 @@
+emacsen-common (3.0.2) unstable; urgency=medium
+
+  * Move from experimental to unstable.
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sun, 29 Jul 2018 19:25:02 -0500
+
 emacsen-common (3.0.1) experimental; urgency=medium
 
   * Conflict with xemacs21 entirely until it's ready for 3.0.  Thanks to
