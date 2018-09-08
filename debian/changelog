@@ -1,3 +1,11 @@
+emacsen-common (3.0.3~1.gbp2db272) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @2db2725df601c40e2563b0632ed9f63c2e149b10 **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 08 Sep 2018 13:57:43 -0500
+
 emacsen-common (3.0.2) unstable; urgency=medium
 
   * Move from experimental to unstable.
