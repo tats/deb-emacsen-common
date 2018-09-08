@@ -1,2 +1,0 @@
-rm_conffile /etc/emacs/site-start.d/00debian-vars.el 3.0.1~
-rm_conffile /etc/emacs/site-start.el 3.0.1~
