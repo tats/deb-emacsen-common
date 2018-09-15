@@ -1,3 +1,11 @@
+emacsen-common (3.0.4~1.gbpb67432) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @b674328892a61b2ee246469b2b5d24b20760af85 **
+
+  * UNRELEASED
+
+ -- Rob Browning <rlb@defaultvalue.org>  Sat, 15 Sep 2018 13:18:33 -0500
+
 emacsen-common (3.0.3) unstable; urgency=medium
 
   * Don't conflict with xemacs21; it's now ready for 3.0.
