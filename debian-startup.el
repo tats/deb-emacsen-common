@@ -123,5 +123,8 @@ supercedes a .el file of the same name."
 
 (defun debian-startup (flavor)
   (unless (eq flavor 'emacs)
+    (dolist (dir load-path)
+      (if (string-match "^/usr/share/emacs/site-lisp/" dir)
+	  (setq load-path (delete dir load-path))))
     (debian-run-directories "/etc/emacs/site-start.d"))
   (debian-run-directories (format "/etc/%s/site-start.d" (symbol-name flavor))))
