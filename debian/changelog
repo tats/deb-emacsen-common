@@ -1,3 +1,12 @@
+emacsen-common (3.0.4+oldem1) UNRELEASED; urgency=medium
+
+  * Accept old GNU Emacs flavors
+  * Don't byte-compile debian-startup.el for old emacsen flavors
+  * Enable /etc/emacs/site-start.d for old emacsen flavors
+  * Remove emacs/site-lisp/* from load-path for old emacsen flavors
+
+ -- Tatsuya Kinoshita <tats@debian.org>  Sat, 18 Apr 2020 10:32:48 +0900
+
 emacsen-common (3.0.4) unstable; urgency=medium
 
   * Conflict with xemacs21-support (<< 21.4.24-6~).  Restore conflict with
