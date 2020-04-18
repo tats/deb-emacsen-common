@@ -122,4 +122,6 @@ supercedes a .el file of the same name."
       (setq load-path (remq item load-path)))))
 
 (defun debian-startup (flavor)
+  (unless (eq flavor 'emacs)
+    (debian-run-directories "/etc/emacs/site-start.d"))
   (debian-run-directories (format "/etc/%s/site-start.d" (symbol-name flavor))))
